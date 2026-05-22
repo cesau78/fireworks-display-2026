@@ -1,29 +1,6 @@
 {
-  "description": "Show boundaries for shell deployment, safety setback, spectators, and bonfire.",
+  "description": "Show boundaries for shell deployment, safety setback, spectators, bonfire, and dryer.",
   "zones": [
-    {
-      "id": "bonfire-zone",
-      "name": "Bonfire",
-      "role": "bonfire",
-      "description": "20 ft × 20 ft area centered east–west on deployment, directly north of the deployment zone.",
-      "corners": [
-        { "label": "NW", "lat": 45.048845, "lng": -90.487735 },
-        { "label": "SE", "lat": 45.04879, "lng": -90.487657 }
-      ],
-      "bounds": {
-        "north": 45.048845,
-        "south": 45.04879,
-        "east": -90.487657,
-        "west": -90.487735
-      },
-      "vertices": [
-        { "lat": 45.048845, "lng": -90.487735 },
-        { "lat": 45.048845, "lng": -90.487657 },
-        { "lat": 45.04879, "lng": -90.487657 },
-        { "lat": 45.04879, "lng": -90.487735 }
-      ],
-      "notes": ""
-    },
     {
       "id": "deployment-zone",
       "name": "Fireworks deployment zone",
@@ -51,7 +28,7 @@
       "id": "safety-zone",
       "name": "Safety zone",
       "role": "safety",
-      "description": "50 ft setback south of deployment (50 ft wide × 50 ft long). Same width as deployment.",
+      "description": "50 ft setback south of deployment (50 ft wide × 50 ft long). Bonfire and dryer are in the north corners inside this zone.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048106, "lng": -90.487599 }
@@ -67,6 +44,52 @@
         { "lat": 45.048243, "lng": -90.487599 },
         { "lat": 45.048106, "lng": -90.487599 },
         { "lat": 45.048106, "lng": -90.487793 }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "bonfire-zone",
+      "name": "Bonfire",
+      "role": "bonfire",
+      "description": "20 ft × 20 ft inside the safety zone, anchored at the north-east corner.",
+      "corners": [
+        { "label": "NW", "lat": 45.048243, "lng": -90.487677 },
+        { "label": "SE", "lat": 45.048188, "lng": -90.487599 }
+      ],
+      "bounds": {
+        "north": 45.048243,
+        "south": 45.048188,
+        "east": -90.487599,
+        "west": -90.487677
+      },
+      "vertices": [
+        { "lat": 45.048243, "lng": -90.487677 },
+        { "lat": 45.048243, "lng": -90.487599 },
+        { "lat": 45.048188, "lng": -90.487599 },
+        { "lat": 45.048188, "lng": -90.487677 }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "dryer-zone",
+      "name": "Dryer",
+      "role": "dryer",
+      "description": "10 ft × 10 ft inside the safety zone, anchored at the north-west corner.",
+      "corners": [
+        { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.048216, "lng": -90.487754 }
+      ],
+      "bounds": {
+        "north": 45.048243,
+        "south": 45.048216,
+        "east": -90.487754,
+        "west": -90.487793
+      },
+      "vertices": [
+        { "lat": 45.048243, "lng": -90.487793 },
+        { "lat": 45.048243, "lng": -90.487754 },
+        { "lat": 45.048216, "lng": -90.487754 },
+        { "lat": 45.048216, "lng": -90.487793 }
       ],
       "notes": ""
     },

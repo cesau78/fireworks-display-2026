@@ -483,7 +483,7 @@
       </div>
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/zone.json</code> —
-        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>bonfire</code> | <code>deployment</code> | <code>safety</code> | <code>crowd</code>), bounds, and vertices.
+        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>deployment</code> | <code>safety</code> | <code>bonfire</code> | <code>dryer</code> | <code>crowd</code>), bounds, and vertices.
         Draw lines on the map or edit <code>data/lines.json</code> (<code>points</code>: <code>{lat,lng}</code> arrays).
       </p>
     </section>
@@ -540,8 +540,14 @@
       bonfire: {
         color: "#dc2626",
         fillColor: "#ef4444",
-        fillOpacity: 0.5,
+        fillOpacity: 0.55,
         markerFill: "#f87171",
+      },
+      dryer: {
+        color: "#2563eb",
+        fillColor: "#3b82f6",
+        fillOpacity: 0.55,
+        markerFill: "#60a5fa",
       },
       deployment: {
         color: "#ca8a04",
