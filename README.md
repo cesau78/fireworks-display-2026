@@ -39,3 +39,5 @@ npx --yes serve .
 | **Bonfire** | 20 × 20 ft, inside safety at NE corner | Red |
 | **Dryer** | 10 × 10 ft, inside safety at NW corner | Blue |
 | **Crowd** | 50 × 100 ft, south of safety | Green |
+
+**Maps:** Field map shows 5-minute summary dots on the fuse path; **Placement** section has a horseshoe schematic with every cue (click for details).

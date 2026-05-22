@@ -394,6 +394,95 @@
       pointer-events: auto;
     }
 
+    .fuse-summary-marker span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      padding: 0 4px;
+      border-radius: 13px;
+      background: rgba(37, 99, 235, 0.95);
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      pointer-events: auto;
+    }
+
+    .horseshoe-wrap {
+      padding: 1rem;
+      background: #1a1f2e;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .horseshoe-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 280px;
+    }
+
+    .horseshoe-wrap .fuse-path {
+      fill: none;
+      stroke: #dc2626;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .horseshoe-wrap .cue-dot {
+      fill: #2563eb;
+      stroke: #fff;
+      stroke-width: 1.5;
+      cursor: pointer;
+    }
+
+    .horseshoe-wrap .cue-dot:hover,
+    .horseshoe-wrap .cue-dot.selected {
+      fill: #60a5fa;
+      stroke: #fbbf24;
+      stroke-width: 2.5;
+    }
+
+    .horseshoe-wrap .cue-dot.start {
+      fill: #22c55e;
+    }
+
+    .placement-detail {
+      padding: 1rem;
+      min-height: 5rem;
+      font-size: 0.9rem;
+    }
+
+    .placement-detail h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .placement-detail .hint {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .placement-detail dl {
+      margin: 0.5rem 0 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 0.75rem;
+    }
+
+    .placement-detail dt {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .placement-racks {
+      border-top: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -525,10 +614,14 @@
       <p class="section-lead" id="placement-description">Loading…</p>
       <div class="card">
         <div id="placement-table-wrap"></div>
+        <div class="placement-detail" id="placement-detail">
+          <p class="hint">Click a blue dot on the diagram for cue details.</p>
+        </div>
+        <div id="placement-racks-wrap" class="placement-racks" hidden></div>
       </div>
       <p class="schema-hint">
-        <strong>Source:</strong> <code>data/placement.json</code> —
-        each position: <code>{ "id": "A1", "lat": 45.04865, "lng": -90.48770, "label": "Rack 1", "notes": "" }</code>
+        <strong>Source:</strong> <code>data/firing-sequence.csv</code> on the horseshoe diagram (all cues).
+        Optional racks in <code>data/placement.json</code>.
       </p>
     </section>
 
@@ -701,45 +794,203 @@
       return rows.map((row) => ({
         row,
         distFt: fuseDistanceFt(row, t0Sec, bucketOffsets),
+        t0Sec,
       }));
     }
 
-    function renderFuseSequenceMarkers() {
+    function formatShowOffset(minutesFromStart) {
+      const h = Math.floor(minutesFromStart / 60);
+      const m = minutesFromStart % 60;
+      return h > 0 ? `+${h}:${String(m).padStart(2, "0")}` : `+${m}m`;
+    }
+
+    function fiveMinuteSummaryBuckets(rows) {
+      if (!rows.length) return [];
+      const t0Sec = Math.min(...rows.map((r) => parseShowTime(r.Start)));
+      const tEndSec = Math.max(...rows.map((r) => parseShowTime(r.Start)));
+      const buckets = [];
+      for (let min = 0; min * 60 <= tEndSec - t0Sec; min += 5) {
+        const startSec = t0Sec + min * 60;
+        const endSec = startSec + 5 * 60;
+        const cues = rows.filter((r) => {
+          const t = parseShowTime(r.Start);
+          return t >= startSec && t < endSec;
+        });
+        if (cues.length === 0 && min > 0) continue;
+        buckets.push({
+          minFromStart: min,
+          label: formatShowOffset(min),
+          distFt: (min * 60) / FUSE_BURN_SEC_PER_FT,
+          startSec,
+          endSec,
+          cues,
+        });
+      }
+      return buckets;
+    }
+
+    function buildHorseshoeSchematic() {
+      const pad = 28;
+      const legPx = 210;
+      const rPx = 36;
+      const topY = 36;
+      const x0 = pad;
+      const x1 = pad + legPx;
+      const cx = x1 + rPx;
+      const cy = topY;
+      const botY = topY + 2 * rPx;
+      const points = [];
+
+      for (let i = 0; i <= 32; i++) {
+        points.push([x0 + (legPx * i) / 32, topY]);
+      }
+      for (let a = 0; a <= 32; a++) {
+        const ang = Math.PI - (Math.PI * a) / 32;
+        points.push([cx + rPx * Math.cos(ang), cy + rPx * Math.sin(ang)]);
+      }
+      for (let i = 1; i <= 32; i++) {
+        points.push([x1 - (legPx * i) / 32, botY]);
+      }
+
+      const pathD =
+        "M " +
+        points.map((p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" L ");
+
+      return {
+        points,
+        pathD,
+        width: cx + rPx + pad,
+        height: botY + pad,
+        maxDistFt: 300,
+      };
+    }
+
+    function schematicPathLength(points) {
+      let total = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+        const dx = points[i + 1][0] - points[i][0];
+        const dy = points[i + 1][1] - points[i][1];
+        total += Math.hypot(dx, dy);
+      }
+      return total;
+    }
+
+    function pointAlongSchematic(points, distFt, maxDistFt) {
+      const target = (distFt / maxDistFt) * schematicPathLength(points);
+      let traveled = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[i];
+        const b = points[i + 1];
+        const segLen = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (traveled + segLen >= target) {
+          const t = segLen > 0 ? (target - traveled) / segLen : 0;
+          return { x: a[0] + t * (b[0] - a[0]), y: a[1] + t * (b[1] - a[1]) };
+        }
+        traveled += segLen;
+      }
+      const last = points[points.length - 1];
+      return { x: last[0], y: last[1] };
+    }
+
+    function cueDetailHtml(row, distFt) {
+      const piece = row.Piece || "—";
+      return (
+        `<h3>#${escapeHtml(String(row.Sequence))} · ${escapeHtml(row.Start || "")}</h3>` +
+        `<dl>` +
+        `<dt>Phase</dt><dd>${escapeHtml(row.Phase || "—")}</dd>` +
+        `<dt>Fuse</dt><dd>${Math.round(distFt)} ft</dd>` +
+        `<dt>Piece</dt><dd>${escapeHtml(piece)}</dd>` +
+        (row.Item ? `<dt>Item</dt><dd>${escapeHtml(row.Item)}</dd>` : "") +
+        (row.Description ? `<dt>Description</dt><dd>${escapeHtml(row.Description)}</dd>` : "") +
+        (row.Comment ? `<dt>Comment</dt><dd>${escapeHtml(row.Comment)}</dd>` : "") +
+        `</dl>`
+      );
+    }
+
+    function summaryBucketPopup(bucket) {
+      const endMin = bucket.minFromStart + 5;
+      const endFt = Math.round((endMin * 60) / FUSE_BURN_SEC_PER_FT);
+      const header =
+        `<strong>${escapeHtml(bucket.label)} – ${formatShowOffset(endMin)}</strong><br>` +
+        `${Math.round(bucket.distFt)}–${endFt} ft · ${bucket.cues.length} cue(s)<hr style="border-color:var(--border);margin:0.4rem 0">`;
+      const list = bucket.cues
+        .map((row) => {
+          const piece = row.Piece || row.Item || "—";
+          return `<div style="margin-bottom:0.35rem"><strong>#${escapeHtml(String(row.Sequence))}</strong> ${escapeHtml(row.Start || "")} · ${escapeHtml(piece)}</div>`;
+        })
+        .join("");
+      return header + (list || "<em>No cues in this window</em>");
+    }
+
+    function renderFuseSummaryMarkers() {
       if (!fieldMap || !firingMarkersLayer) return;
       firingMarkersLayer.clearLayers();
       const latLngs = getFuseLatLngs();
       if (latLngs.length < 2 || firingSequenceRows.length === 0) return;
 
-      ensureLinesPane(fieldMap);
-      computeFusePlacements(firingSequenceRows).forEach(({ row, distFt }) => {
-        const pt = pointAlongPath(latLngs, distFt);
+      ensureMapPanes(fieldMap);
+      fiveMinuteSummaryBuckets(firingSequenceRows).forEach((bucket) => {
+        const pt = pointAlongPath(latLngs, Math.min(bucket.distFt, 299.5));
         if (!pt) return;
-
-        const piece = row.Piece || row.Item || "—";
-        const label = String(row.Sequence);
         const icon = L.divIcon({
-          className: "fuse-placement-marker",
-          html: `<span>${escapeHtml(label)}</span>`,
-          iconSize: [22, 22],
-          iconAnchor: [11, 11],
+          className: "fuse-summary-marker",
+          html: `<span>${escapeHtml(bucket.label)}</span>`,
+          iconSize: [32, 26],
+          iconAnchor: [16, 13],
         });
         const marker = L.marker([pt.lat, pt.lng], {
           icon,
           pane: "cuesPane",
           zIndexOffset: 1000,
         });
-        marker.bindPopup(
-          `<strong>#${escapeHtml(label)} · ${Math.round(distFt)} ft</strong><br>` +
-            `<em>${escapeHtml(row.Phase || "")}</em> · ${escapeHtml(row.Start || "")}<br>` +
-            `<strong>Piece:</strong> ${escapeHtml(piece)}<br>` +
-            (row.Item ? `<strong>Item:</strong> ${escapeHtml(row.Item)}<br>` : "") +
-            (row.Description
-              ? `<span style="font-size:0.85em">${escapeHtml(row.Description.slice(0, 120))}${row.Description.length > 120 ? "…" : ""}</span>`
-              : "")
-        );
+        marker.bindPopup(summaryBucketPopup(bucket), { maxWidth: 320 });
         firingMarkersLayer.addLayer(marker);
       });
       firingMarkersLayer.bringToFront();
+    }
+
+    function renderHorseshoePlacement() {
+      const wrap = document.getElementById("placement-table-wrap");
+      const detail = document.getElementById("placement-detail");
+
+      if (firingSequenceRows.length === 0) {
+        wrap.innerHTML = `<div class="empty-state">Add <code>data/firing-sequence.csv</code> for the horseshoe placement diagram.</div>`;
+        return;
+      }
+
+      const schematic = buildHorseshoeSchematic();
+      const placements = computeFusePlacements(firingSequenceRows);
+
+      const dots = placements
+        .map(({ row, distFt }) => {
+          const pt = pointAlongSchematic(schematic.points, distFt, schematic.maxDistFt);
+          const isStart = String(row.Sequence) === "1";
+          return `<circle class="cue-dot${isStart ? " start" : ""}" cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="5" data-seq="${escapeHtml(String(row.Sequence))}" tabindex="0" role="button" aria-label="Cue ${escapeHtml(String(row.Sequence))}"><title>#${escapeHtml(String(row.Sequence))} ${escapeHtml(row.Piece || "")}</title></circle>`;
+        })
+        .join("");
+
+      wrap.innerHTML = `
+        <div class="horseshoe-wrap">
+          <svg viewBox="0 0 ${schematic.width} ${schematic.height}" xmlns="http://www.w3.org/2000/svg" aria-label="Fuse path schematic: start top left, along top, semicircle down, return along bottom">
+            <path class="fuse-path" d="${schematic.pathD}" />
+            ${dots}
+            <text x="${schematic.points[0][0]}" y="${schematic.points[0][1] - 8}" fill="#86efac" font-size="11" font-weight="bold">1 →</text>
+            <text x="${schematic.points[schematic.points.length - 1][0] - 16}" y="${schematic.points[schematic.points.length - 1][1] + 16}" fill="#93c5fd" font-size="11" font-weight="bold">← end</text>
+          </svg>
+        </div>`;
+
+      detail.innerHTML = `<p class="hint">Click a blue dot for cue details. Green = cue #1. Path: top-left → right → semicircle → left.</p>`;
+
+      const bySeq = Object.fromEntries(placements.map((p) => [String(p.row.Sequence), p]));
+
+      wrap.querySelector("svg").addEventListener("click", (e) => {
+        const dot = e.target.closest(".cue-dot");
+        if (!dot) return;
+        wrap.querySelectorAll(".cue-dot").forEach((d) => d.classList.remove("selected"));
+        dot.classList.add("selected");
+        const p = bySeq[dot.getAttribute("data-seq")];
+        if (p) detail.innerHTML = cueDetailHtml(p.row, p.distFt);
+      });
     }
 
     function loadLocalLines() {
@@ -960,7 +1211,7 @@
       });
       if (firingMarkersLayer) firingMarkersLayer.bringToFront();
       mapLinesLayer.bringToFront();
-      renderFuseSequenceMarkers();
+      renderFuseSummaryMarkers();
     }
 
     function updateLinesPanel() {
@@ -1216,7 +1467,7 @@
         : "";
       const placementLegend =
         firingSequenceRows.length > 0
-          ? `<span><i style="border-color:#fff;background:#2563eb;border-radius:50%"></i>Show cues (${firingSequenceRows.length})</span>`
+          ? `<span><i style="border-color:#fff;background:#2563eb;border-radius:50%"></i>5-min summary</span>`
           : "";
       document.getElementById("zone-legend").innerHTML = zoneLegend + fuseLegend + placementLegend;
 
@@ -1312,24 +1563,18 @@
 
     function renderPlacement(placement, zoneData) {
       document.getElementById("placement-description").textContent =
-        placement.description || "Mortar and rack positions within the zone.";
+        `${firingSequenceRows.length} cues on fuse schematic — #1 top-left, along top, semicircle down, back left. Details on click.`;
 
-      const wrap = document.getElementById("placement-table-wrap");
+      renderHorseshoePlacement();
+
+      const racksWrap = document.getElementById("placement-racks-wrap");
       const positions = placement.positions || [];
-
       if (positions.length === 0) {
-        wrap.innerHTML = `
-          <div class="empty-state">
-            No positions yet. Add entries to <code>data/placement.json</code>.
-            <code>{
-  "positions": [
-    { "id": "A1", "lat": 45.048654, "lng": -90.487696, "label": "Center rack", "notes": "" }
-  ]
-}</code>
-          </div>`;
+        racksWrap.hidden = true;
         return;
       }
 
+      racksWrap.hidden = false;
       const rows = positions
         .map((p) => {
           const inZone = pointInZone(p.lat, p.lng, getDeploymentZone(zoneData).bounds);
@@ -1345,7 +1590,8 @@
         })
         .join("");
 
-      wrap.innerHTML = `
+      racksWrap.innerHTML = `
+        <h3 style="margin:0 0 0.5rem;font-size:0.95rem">Rack positions (placement.json)</h3>
         <table>
           <thead>
             <tr><th>ID</th><th>Label</th><th>Coordinates</th><th>In zone</th><th></th><th>Notes</th></tr>
