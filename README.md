@@ -32,4 +32,4 @@ npx --yes serve .
 
 **Deployment** — 50 ft × 100 ft (E–W × N–S), centered on the original east/west midpoint. NW `45.04879, -90.487793` to SE `45.048517, -90.487599`.
 
-**Crowd** — Same 50 ft width, directly south of deployment; 50 ft long (half of deployment). NW `45.048517, -90.487793` to SE `45.04838, -90.487599`.
+**Crowd** — Same 50 ft width, 50 ft long; north edge 100 ft south of deployment. NW `45.048243, -90.487793` to SE `45.048106, -90.487599`.

@@ -28,22 +28,22 @@
       "id": "crowd-zone",
       "name": "Crowd zone",
       "role": "crowd",
-      "description": "Spectator area directly south of deployment. Same 50 ft width as deployment; 50 ft long (half of deployment), with its north edge on the deployment south boundary.",
+      "description": "Spectator area south of deployment. Same 50 ft width; 50 ft long. North edge is 100 ft south of the deployment zone south boundary.",
       "corners": [
-        { "label": "NW", "lat": 45.048517, "lng": -90.487793 },
-        { "label": "SE", "lat": 45.04838, "lng": -90.487599 }
+        { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.048106, "lng": -90.487599 }
       ],
       "bounds": {
-        "north": 45.048517,
-        "south": 45.04838,
+        "north": 45.048243,
+        "south": 45.048106,
         "east": -90.487599,
         "west": -90.487793
       },
       "vertices": [
-        { "lat": 45.048517, "lng": -90.487793 },
-        { "lat": 45.048517, "lng": -90.487599 },
-        { "lat": 45.04838, "lng": -90.487599 },
-        { "lat": 45.04838, "lng": -90.487793 }
+        { "lat": 45.048243, "lng": -90.487793 },
+        { "lat": 45.048243, "lng": -90.487599 },
+        { "lat": 45.048106, "lng": -90.487599 },
+        { "lat": 45.048106, "lng": -90.487793 }
       ],
       "notes": ""
     }
