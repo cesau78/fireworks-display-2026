@@ -222,6 +222,39 @@
 
     .links-row a:hover { border-color: var(--accent); }
 
+    .dimension-label {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .dimension-label span {
+      display: inline-block;
+      padding: 0.2rem 0.45rem;
+      background: rgba(12, 14, 20, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 650;
+      white-space: nowrap;
+      font-family: var(--font);
+      letter-spacing: 0.02em;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+      pointer-events: none;
+    }
+
+    .dimension-label.dim-width span::before {
+      content: "W ";
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .dimension-label.dim-length span::before {
+      content: "L ";
+      color: var(--muted);
+      font-weight: 500;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -406,8 +439,55 @@
       return res.json();
     }
 
+    const METERS_PER_DEG_LAT = 111320;
+    const FEET_PER_METER = 3.28084;
+
     function fmtCoord(lat, lng) {
       return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+
+    function latSpanToFeet(deltaLat) {
+      return deltaLat * METERS_PER_DEG_LAT * FEET_PER_METER;
+    }
+
+    function lngSpanToFeet(deltaLng, latDeg) {
+      return deltaLng * METERS_PER_DEG_LAT * Math.cos((latDeg * Math.PI) / 180) * FEET_PER_METER;
+    }
+
+    function zoneDimensionsFeet(zone) {
+      const b = zone.bounds;
+      const midLat = (b.north + b.south) / 2;
+      return {
+        widthFt: lngSpanToFeet(b.east - b.west, midLat),
+        lengthFt: latSpanToFeet(b.north - b.south),
+      };
+    }
+
+    function formatFeet(ft) {
+      return `${Math.round(ft)} ft`;
+    }
+
+    function addZoneDimensionLabels(map, zone) {
+      const b = zone.bounds;
+      const midLat = (b.north + b.south) / 2;
+      const midLng = (b.east + b.west) / 2;
+      const { widthFt, lengthFt } = zoneDimensionsFeet(zone);
+      const latPad = (b.north - b.south) * 0.12;
+      const lngPad = (b.east - b.west) * 0.12;
+
+      function placeLabel(lat, lng, text, className) {
+        L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: `dimension-label ${className}`,
+            html: `<span>${text}</span>`,
+          }),
+          interactive: false,
+          keyboard: false,
+        }).addTo(map);
+      }
+
+      placeLabel(b.north + latPad, midLng, formatFeet(widthFt), "dim-width");
+      placeLabel(midLat, b.east + lngPad, formatFeet(lengthFt), "dim-length");
     }
 
     function googleMapsOutlineUrl(vertices, center) {
@@ -445,6 +525,7 @@
 
     function renderZoneDetail(zone) {
       const bounds = zone.bounds;
+      const { widthFt, lengthFt } = zoneDimensionsFeet(zone);
       const center = {
         lat: (bounds.north + bounds.south) / 2,
         lng: (bounds.east + bounds.west) / 2,
@@ -454,6 +535,8 @@
           <h3>${escapeHtml(zone.name)}</h3>
           <p>${escapeHtml(zone.description || "")}</p>
           <div class="coords-grid">
+            <div class="coord-block"><label>Width (E–W)</label><code>${formatFeet(widthFt)}</code></div>
+            <div class="coord-block"><label>Length (N–S)</label><code>${formatFeet(lengthFt)}</code></div>
             <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
             <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
             <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
@@ -552,6 +635,8 @@
           marker.bindPopup(`${escapeHtml(zone.name)} — vertex ${i + 1}<br>${fmtCoord(v.lat, v.lng)}`);
           group.addLayer(marker);
         });
+
+        addZoneDimensionLabels(map, zone);
       });
 
       map.fitBounds(group.getBounds(), { padding: [28, 28] });
