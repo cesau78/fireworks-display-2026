@@ -5,20 +5,20 @@
       "id": "deployment-zone",
       "name": "Fireworks deployment zone",
       "role": "deployment",
-      "description": "Rectangular area where shells are deployed (50 ft wide × 200 ft long). All placement coordinates must fall inside this boundary.",
+      "description": "Rectangular area where shells are deployed (50 ft wide × 150 ft long). All placement coordinates must fall inside this boundary.",
       "corners": [
-        { "label": "NW", "lat": 45.04879, "lng": -90.487793 },
+        { "label": "NW", "lat": 45.048653, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048243, "lng": -90.487599 }
       ],
       "bounds": {
-        "north": 45.04879,
+        "north": 45.048653,
         "south": 45.048243,
         "east": -90.487599,
         "west": -90.487793
       },
       "vertices": [
-        { "lat": 45.04879, "lng": -90.487793 },
-        { "lat": 45.04879, "lng": -90.487599 },
+        { "lat": 45.048653, "lng": -90.487793 },
+        { "lat": 45.048653, "lng": -90.487599 },
         { "lat": 45.048243, "lng": -90.487599 },
         { "lat": 45.048243, "lng": -90.487793 }
       ],
@@ -97,22 +97,22 @@
       "id": "crowd-zone",
       "name": "Crowd zone",
       "role": "crowd",
-      "description": "Spectator area south of the safety zone. Same 50 ft width; 50 ft long.",
+      "description": "Spectator area south of the safety zone. Same 50 ft width; 100 ft long.",
       "corners": [
         { "label": "NW", "lat": 45.048106, "lng": -90.487793 },
-        { "label": "SE", "lat": 45.047969, "lng": -90.487599 }
+        { "label": "SE", "lat": 45.047832, "lng": -90.487599 }
       ],
       "bounds": {
         "north": 45.048106,
-        "south": 45.047969,
+        "south": 45.047832,
         "east": -90.487599,
         "west": -90.487793
       },
       "vertices": [
         { "lat": 45.048106, "lng": -90.487793 },
         { "lat": 45.048106, "lng": -90.487599 },
-        { "lat": 45.047969, "lng": -90.487599 },
-        { "lat": 45.047969, "lng": -90.487793 }
+        { "lat": 45.047832, "lng": -90.487599 },
+        { "lat": 45.047832, "lng": -90.487793 }
       ],
       "notes": ""
     }
