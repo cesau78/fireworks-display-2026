@@ -367,15 +367,15 @@
       border: none !important;
     }
 
-    .fuse-arrow-icon span {
+    .fuse-arrow-icon {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .fuse-arrow-icon svg {
       display: block;
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-bottom: 10px solid #dc2626;
-      filter: drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
-      transform-origin: 50% 80%;
+      overflow: visible;
+      filter: drop-shadow(0 0 2px #fff) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.85));
     }
 
     .fuse-placement-marker {
@@ -730,7 +730,7 @@
         });
         const marker = L.marker([pt.lat, pt.lng], {
           icon,
-          pane: "linesPane",
+          pane: "cuesPane",
           zIndexOffset: 1000,
         });
         marker.bindPopup(
@@ -804,7 +804,19 @@
       return null;
     }
 
+    function fuseArrowIcon(bearingDeg) {
+      return L.divIcon({
+        className: "fuse-arrow-icon",
+        html: `<svg width="18" height="18" viewBox="0 0 18 18" style="transform:rotate(${bearingDeg}deg)">
+          <path d="M9 2 L15 15 L9 12 L3 15 Z" fill="#ffffff" stroke="#dc2626" stroke-width="2.2" stroke-linejoin="round"/>
+        </svg>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
+    }
+
     function addFuseArrows(map, latLngs, intervalFt) {
+      ensureMapPanes(map);
       const total = latLngs.reduce(
         (sum, _, i) => (i < latLngs.length - 1 ? sum + segmentLengthFeet(latLngs[i], latLngs[i + 1]) : sum),
         0
@@ -812,16 +824,10 @@
       for (let d = intervalFt; d < total; d += intervalFt) {
         const pt = pointAlongPath(latLngs, d);
         if (!pt) continue;
-        const icon = L.divIcon({
-          className: "fuse-arrow-icon",
-          html: `<span style="transform: rotate(${pt.bearing}deg)"></span>`,
-          iconSize: [12, 12],
-          iconAnchor: [6, 10],
-        });
         const marker = L.marker([pt.lat, pt.lng], {
-          icon,
+          icon: fuseArrowIcon(pt.bearing),
           interactive: false,
-          pane: "linesPane",
+          pane: "arrowsPane",
         });
         mapLinesLayer.addLayer(marker);
       }
@@ -886,12 +892,27 @@
       document.getElementById("btn-draw-cancel").disabled = n === 0 && !drawModeActive;
     }
 
+    function ensureMapPanes(map) {
+      const panes = [
+        { name: "zonesPane", z: 380 },
+        { name: "linesPane", z: 620 },
+        { name: "arrowsPane", z: 720 },
+        { name: "cuesPane", z: 730 },
+      ];
+      panes.forEach(({ name, z }) => {
+        if (!map.getPane(name)) {
+          map.createPane(name);
+        }
+        const el = map.getPane(name);
+        el.style.zIndex = String(z);
+        if (name !== "cuesPane") {
+          el.style.pointerEvents = "none";
+        }
+      });
+    }
+
     function ensureLinesPane(map) {
-      if (!map.getPane("linesPane")) {
-        map.createPane("linesPane");
-        map.getPane("linesPane").style.zIndex = 650;
-        map.getPane("linesPane").style.pointerEvents = "none";
-      }
+      ensureMapPanes(map);
     }
 
     function addPolylineToLinesLayer(latLngs, options) {
@@ -942,6 +963,7 @@
           addFuseArrows(fieldMap, latLngs, line.arrow_interval_ft);
         }
       });
+      if (firingMarkersLayer) firingMarkersLayer.bringToFront();
       mapLinesLayer.bringToFront();
       renderFuseSequenceMarkers();
     }
@@ -1214,6 +1236,7 @@
       `;
 
       const map = L.map("map", { scrollWheelZoom: true });
+      ensureMapPanes(map);
 
       const esriAttribution =
         'Tiles &copy; <a href="https://www.esri.com/">Esri</a> — Maxar, Earthstar, USDA, USGS, AeroGRID, IGN, GIS Community';
@@ -1254,6 +1277,7 @@
           weight: 3,
           fillColor: style.fillColor,
           fillOpacity: style.fillOpacity,
+          pane: "zonesPane",
         }).addTo(map);
 
         polygon.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
