@@ -555,6 +555,8 @@
       });
 
       map.fitBounds(group.getBounds(), { padding: [28, 28] });
+      const fitZoom = map.getZoom();
+      map.setZoom(Math.max(fitZoom - 4, map.getMinZoom()));
     }
 
     function renderPlacement(placement, zoneData) {
