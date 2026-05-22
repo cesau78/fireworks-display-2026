@@ -12,7 +12,7 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 
 | Material | Amount |
 |----------|--------|
-| 1/2 in. plywood, 4×8 | **1 sheet** — 4 brown + 12 green + 8 blue pieces |
+| 4×8 sheet, 1/2 in. thick | **1 sheet** — 4 brown + 12 green + 8 blue wall boards |
 | 2 in. dowel rod | **≥6 ft** — 4× middle dowels @ 17-7/8 in. |
 | 1-1/2 in. dowel rod | **≥6 ft** — 4× inner dowels @ 17-7/8 in. |
 | Mortar tubes (2-3/8 in. OD × 12 in.) | **50** (25 per rack) |
@@ -20,7 +20,7 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 
 ### Shop workflow
 
-1. **Lay out cuts** — Use the [cut list in `BOM.md`](BOM.md#cut-list--two-racks-build-qty). Cut all **24** plywood blanks before notching (same sizes repeat rack to rack).
+1. **Lay out cuts** — Use the [cut list in `BOM.md`](BOM.md#cut-list--two-racks-build-qty). Cut all **24** wall board blanks before notching (same sizes repeat rack to rack).
 2. **Notch** — Follow the [assembly order](#assembly-order) below: green columns → brown ends → blue mid rows. Half-lap depth is **1-3/4 in.** (half of 3-1/2 in. wall height).
 3. **Dowels** — Rip or buy **2 in.** and **1-1/2 in.** rod; cut eight pieces to **17-7/8 in.** Match `row-dowel-top-middle.scad` and `row-dowel-top-inner.scad`.
 4. **Assemble rack A** — Dry-fit half-laps → fasten → install **4 dowels** (middle ±6 in. X, inner ±2 in. X) → load **25 tubes** with column tilt per [row angles](#row-angles).
@@ -29,8 +29,8 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 
 ```mermaid
 flowchart TB
-  buy[Buy stock: 1 plywood sheet + dowels + 50 tubes]
-  cut[Cut 24 plywood blanks + 8 dowels]
+  buy[Buy stock: 1 sheet + dowels + 50 tubes]
+  cut[Cut 24 wall boards + 8 dowels]
   notch[Notch all laps on 24 boards]
   A[Assemble rack A + 25 tubes]
   B[Assemble rack B + 25 tubes]
@@ -202,7 +202,7 @@ Board height **3-1/2 in.** Lap depth **1-3/4 in.** (half height). Column boards 
 3. **Notch brown rows** — top-half at all six column X (`row-board-bottom.scad`).
 4. **Notch blue rows** — bottom-half at all six column X (`row-board-middle.scad`).
 5. **Dry-fit** — six green columns → four blue mid rows → brown front/back.
-6. **Fasten** — screw or bolt through laps (pilot holes in 1/2 in. plywood); keep column/brown tops flush at **z = 0** for tube seating.
+6. **Fasten** — screw or bolt through laps (pilot for 1/2 in. wall thickness); keep column/brown tops flush at **z = 0** for tube seating.
 7. **Dowels** — middle (±6 in. X) then inner (±2 in. X); bottom **1 in.** above blue board tops.
 8. **Tubes** — insert 25 tubes; tilt columns per [row angles](#row-angles).
 9. **Second rack** — repeat steps 1–8; label **A** / **B** if needed.
@@ -210,7 +210,7 @@ Board height **3-1/2 in.** Lap depth **1-3/4 in.** (half height). Column boards 
 
 ```mermaid
 flowchart LR
-  cut[Cut plywood] --> notchG[Notch green columns]
+  cut[Cut wall boards] --> notchG[Notch green columns]
   notchG --> notchB[Notch brown rows]
   notchB --> notchM[Notch blue mid rows]
   notchM --> fit[Dry-fit half-laps]

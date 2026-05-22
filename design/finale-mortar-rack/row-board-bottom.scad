@@ -31,4 +31,5 @@ module row_boards_bottom() {
   row_board_bottom(iy1);
 }
 
-row_boards_bottom();
+if (is_undef(FINALE_RACK_ASSEMBLY))
+  row_boards_bottom();

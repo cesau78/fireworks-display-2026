@@ -31,4 +31,5 @@ module row_boards_middle() {
     row_board_middle(middle_row_divider_center_y(i));
 }
 
-row_boards_middle();
+if (is_undef(FINALE_RACK_ASSEMBLY))
+  row_boards_middle();

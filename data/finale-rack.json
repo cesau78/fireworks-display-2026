@@ -40,7 +40,7 @@
     "notes": "Outer row ±12° from vertical. Inner rows ±6°. Same angles on both racks."
   },
   "structure": {
-    "walls": "1/2 in. plywood — 2 brown ends + 6 green dividers + 4 blue mid rows per rack; 4 top dowels (2× 2 in. + 2× 1.5 in. OD)",
+    "walls": "1/2 in. thick — 2 brown ends + 6 green dividers + 4 blue mid rows per rack; 4 top dowels (2× 2 in. + 2× 1.5 in. OD)",
     "board_thickness_in": 0.5,
     "wall_thickness_in": 0.5,
     "wall_height_in": 3.5,
@@ -52,7 +52,7 @@
     "tilt_pad_x_in": 2.74,
     "footprint_w_in": 20.365,
     "footprint_d_in": 14.875,
-    "material": "Baltic birch plywood (suggested)",
+    "material": "1/2 in. wall boards + dowel rod",
     "cad": "design/finale-mortar-rack/rack.scad"
   }
 }

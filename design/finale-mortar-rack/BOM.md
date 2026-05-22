@@ -10,19 +10,19 @@ OpenSCAD source: `rack.scad` · Machine-readable list: `data/finale-rack-bom.jso
 
 | Item | Qty | Notes |
 |------|-----|--------|
-| **1/2 in. plywood, 4×8** | **1 sheet** | All brown, green, and blue walls for **both** racks (~12 sq ft of cuts on a 32 sq ft sheet) |
+| **4×8 sheet, 1/2 in. thick** | **1 sheet** | All brown, green, and blue wall boards for **both** racks (~12 sq ft of cuts on a 32 sq ft sheet) |
 | **2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 17-7/8 in. (`row-dowel-top-middle.scad`) |
 | **1-1/2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 17-7/8 in. (`row-dowel-top-inner.scad`) |
 | **Mortar tubes** | **50** | 2-3/8 in. OD × 12 in. long (25 per rack; often already on hand) |
 | **Class C 2 in. shells** | **50** | Commander finale block |
 
-Fasteners (per rack, approximate): wood screws or bolts through half-lap joints — pilot for 1/2 in. plywood.
+Fasteners (per rack, approximate): screws or bolts through half-lap joints — pilot for 1/2 in. wall thickness.
 
 ---
 
 ## Cut list — one rack
 
-All plywood **1/2 in.** thick, height **3-1/2 in.** (`wall_height_in`). Notches per OpenSCAD part files (half-lap at crossings).
+All wall boards **1/2 in.** thick, height **3-1/2 in.** (`wall_height_in`). Notches per OpenSCAD part files (half-lap at crossings).
 
 | Qty | Part | Cut size | OpenSCAD / notes |
 |-----|------|----------|------------------|
@@ -32,7 +32,7 @@ All plywood **1/2 in.** thick, height **3-1/2 in.** (`wall_height_in`). Notches 
 | 2 | Dowel middle (±6 in. X) | **2 in. OD × 17-7/8 in.** | `row-dowel-top-middle.scad` |
 | 2 | Dowel inner (±2 in. X) | **1.5 in. OD × 17-7/8 in.** | `row-dowel-top-inner.scad` |
 
-**Plywood per rack:** 12 pieces · **Dowels per rack:** 4 pieces · **Tubes per rack:** 25
+**Wall boards per rack:** 12 pieces · **Dowels per rack:** 4 pieces · **Tubes per rack:** 25
 
 ---
 
@@ -49,7 +49,7 @@ Multiply the one-rack table by **2**. Suggested labeling: **Rack A** and **Rack 
 | Dowel inner (1.5 in. OD) | 2 | **4** |
 | Mortar tubes | 25 | **50** |
 
-**Total plywood pieces:** 24 · **Total dowels:** 8
+**Total wall boards:** 24 · **Total dowels:** 8
 
 ---
 

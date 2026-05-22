@@ -85,7 +85,7 @@ function row_angle_deg(i) =
 
 tilt_pad_x_in = tube_length_in * sin(outer_angle_deg) + tube_gap_in;
 
-// --- Structure (1/2 in. plywood walls only) ---
+// --- Structure (1/2 in. wall boards) ---
 wall_thickness_in = 0.5;
 wall_height_in = 3.5; // row boards + column boards (same height)
 

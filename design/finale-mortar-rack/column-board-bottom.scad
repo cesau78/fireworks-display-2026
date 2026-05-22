@@ -52,4 +52,5 @@ module column_boards_bottom() {
     column_board_bottom(x_divider_center_x(i));
 }
 
-column_boards_bottom();
+if (is_undef(FINALE_RACK_ASSEMBLY))
+  column_boards_bottom();

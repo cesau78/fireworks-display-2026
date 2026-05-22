@@ -3,10 +3,10 @@
   "title": "Finale Mortar Rack — Bill of Materials",
   "per_unit": "One rack (5 rows × 5 tubes = 25 tubes). Build 2 identical racks for the full finale.",
   "rack_qty": 2,
-  "material": "1/2 in. plywood (walls) + hardwood dowel rod (top retention)",
+  "material": "1/2 in. wall boards + hardwood dowel rod (see cut list)",
   "standard_stock": [
     {
-      "name": "4×8 sheet (1/2 in. plywood)",
+      "name": "4×8 sheet (1/2 in.)",
       "width_in": 48,
       "length_in": 96,
       "qty": 1,
@@ -31,7 +31,6 @@
     {
       "id": "wall-end",
       "name": "End wall (front & back)",
-      "stock": "plywood",
       "layer": "brown",
       "qty": 2,
       "qty_total_two_racks": 4,
@@ -44,7 +43,6 @@
     {
       "id": "column-board-x",
       "name": "Green divider (+X)",
-      "stock": "plywood",
       "layer": "green",
       "qty": 6,
       "qty_total_two_racks": 12,
@@ -57,7 +55,6 @@
     {
       "id": "middle-row-divider",
       "name": "Mid row divider (between tube rows)",
-      "stock": "plywood",
       "layer": "blue",
       "qty": 4,
       "qty_total_two_racks": 8,
@@ -107,19 +104,19 @@
     "tubes_per_rack": 25,
     "racks_for_show": 2,
     "tubes_total": 50,
-    "plywood_parts_per_rack": 12,
+    "wall_parts_per_rack": 12,
     "dowels_per_rack": 4,
     "parts_per_rack": 16,
-    "plywood_parts_two_racks": 24,
+    "wall_parts_two_racks": 24,
     "dowels_two_racks": 8,
-    "plywood_area_sqft_two_racks": 12,
+    "wall_sheet_area_sqft_two_racks": 12,
     "sheet_utilization_pct": 38,
     "shell_cues": "47–96",
     "footprint_w_in": 20.365,
     "footprint_d_in": 14.875
   },
   "building_two_racks": {
-    "overview": "Cut and notch all plywood for both racks in one session, then assemble two identical frames. Load 25 tubes per rack on site.",
+    "overview": "Cut and notch all wall boards for both racks in one session, then assemble two identical frames. Load 25 tubes per rack on site.",
     "steps": [
       "Print or open this BOM and preview rack.scad in OpenSCAD.",
       "From one 4×8 sheet, cut 4 brown, 12 green, and 8 blue blanks (sizes in parts table).",
@@ -131,7 +128,7 @@
     ]
   },
   "cut_layout": {
-    "plywood_sheet": "One 4×8 — all plywood walls for 2 racks",
+    "wall_sheet": "One 4×8 — all wall boards for 2 racks",
     "dowel_stock": "One 6 ft (or longer) stick each of 2 in. and 1-1/2 in. dowel",
     "tips": [
       "Each rack is 5×5 (25 tubes); build two racks for the 50-tube Commander finale.",
