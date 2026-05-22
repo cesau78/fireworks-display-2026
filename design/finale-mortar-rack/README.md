@@ -106,6 +106,21 @@ All six green dividers share the same cut (**17-7/8 × 3-1/2 in.** with `column_
 
 ## Blueprints
 
+### Four-view sheet (parts + assembly)
+
+Print or zoom [`blueprint.svg`](blueprint.svg) — one sheet with **four orthographic/perspective views** and a parts cut legend:
+
+| Panel | View | Shows |
+|-------|------|--------|
+| ① | **Plan** (top, +Z) | Brown ends, six green columns, four blue mid-rows, tube grid, dowel X positions |
+| ② | **Front elevation** (crowd, −Y) | Fan tilt ±12° / ±6° / 0° by column; wall height 3-1/2 in. |
+| ③ | **Side section** (+X) | Depth along Y; blue boards at z = 1-3/4 in.; half-lap bands |
+| ④ | **Isometric assembly** | Exploded build order (columns → blue → brown → dowels → tubes) with vanishing guides |
+
+Open in a browser or vector editor; dimensions match `config.scad`. Build **two identical racks** from the same drawing (double part qty in [`BOM.md`](BOM.md)).
+
+![Four-view blueprint — plan, front, side, isometric assembly](blueprint.svg)
+
 Axes (rack origin **X = 0, Y = 0** at center column / center depth tube):
 
 | Axis | Direction |
@@ -248,6 +263,7 @@ openscad design/finale-mortar-rack/row-dowel-top-inner.scad
 | `row-dowel-top-middle.scad` | Middle dowel (self-contained preview) |
 | `row-dowel-top-inner.scad` | Inner dowel (self-contained preview) |
 | `rack.scad` | Full assembly (all board layers + optional tubes) |
+| `blueprint.svg` | Four-view construction blueprint (parts + assembly) |
 
 Edit `config.scad` for angles, divider/tube positions, and wall height.
 

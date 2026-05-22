@@ -2,7 +2,7 @@
 
 **Design:** 5 rows × 5 tubes = **25 tubes per rack**. Build **two identical racks** for the Commander finale (**50 shells**, cues **47–96** in `data/firing-sequence.csv`).
 
-OpenSCAD source: `rack.scad` · Machine-readable list: `data/finale-rack-bom.json`
+OpenSCAD source: `rack.scad` · Machine-readable list: `data/finale-rack-bom.json` · **Blueprint:** [`blueprint.svg`](blueprint.svg) (four-view parts + assembly)
 
 ---
 

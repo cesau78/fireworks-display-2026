@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 980" role="img" aria-labelledby="bp-title bp-desc">
+  <title id="bp-title">Finale Mortar Rack - Four-View Blueprint</title>
+  <desc id="bp-desc">Plan, front elevation, side section, isometric assembly, and part cut sheet for one 5x5 rack. Dimensions from config.scad.</desc>
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a5a8a" stroke-width="0.4" opacity="0.35"/>
+    </pattern>
+    <style>
+      .bg { fill: #0c2d4a; }
+      .grid { fill: url(#grid); }
+      .frame { fill: none; stroke: #5a9ec4; stroke-width: 1.2; }
+      .dim { fill: none; stroke: #7ec8e8; stroke-width: 0.8; stroke-dasharray: 4 3; }
+      .txt { fill: #e8f4fc; font-family: 'Segoe UI', system-ui, sans-serif; }
+      .lbl { fill: #b8daf0; font-size: 11px; }
+      .tit { fill: #ffffff; font-size: 13px; font-weight: 600; }
+      .sub { fill: #8eb8d4; font-size: 10px; }
+      .part-brown { fill: #c4894a; stroke: #f0d0a8; stroke-width: 0.8; }
+      .part-green { fill: #5a8f42; stroke: #b8e0a0; stroke-width: 0.8; }
+      .part-blue { fill: #4a6a9e; stroke: #a8c8f0; stroke-width: 0.8; }
+      .part-dowel-m { fill: #c4a84a; stroke: #f0e0a0; stroke-width: 0.8; }
+      .part-dowel-i { fill: #9a7a3a; stroke: #e0c890; stroke-width: 0.8; }
+      .tube { fill: none; stroke: #6eb8f0; stroke-width: 1.4; opacity: 0.85; }
+      .tube-fill { fill: #1a4a6a; stroke: #6eb8f0; stroke-width: 1; opacity: 0.5; }
+      .axis { stroke: #f0a040; stroke-width: 1.2; fill: #f0a040; font-size: 10px; font-weight: 600; }
+      .step { fill: #ffffff; font-size: 10px; font-weight: 700; }
+      .step-bg { fill: #0c2d4a; stroke: #f0a040; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1400" height="980"/>
+  <rect class="grid" width="1400" height="980"/>
+
+  <text class="txt tit" x="40" y="36">FINALE MORTAR RACK - FOUR-VIEW BLUEPRINT</text>
+  <text class="txt sub" x="40" y="54">One rack - 5x5 tubes (25) - build x2 for 50-shell finale - 1/2 in. plywood + dowels</text>
+  <text class="txt sub" x="40" y="70">Source: design/finale-mortar-rack/config.scad - Scale varies per panel - Units: inches</text>
+  <line x1="40" y1="78" x2="1360" y2="78" stroke="#3a7aaa" stroke-width="1"/>
+
+  <rect class="frame" x="30" y="90" width="660" height="400" rx="4"/>
+  <rect class="frame" x="710" y="90" width="660" height="400" rx="4"/>
+  <rect class="frame" x="30" y="510" width="660" height="450" rx="4"/>
+  <rect class="frame" x="710" y="510" width="660" height="450" rx="4"/>
+
+  <text class="txt tit" x="50" y="112">1. PLAN - TOP (+Z)</text>
+  <text class="txt sub" x="50" y="128">Crowd toward bottom (-Y). Origin X=0, Y=0 at center tube.</text>
+
+  <text class="txt tit" x="730" y="112">2. FRONT ELEVATION - CROWD (-Y)</text>
+  <text class="txt sub" x="730" y="128">Fan tilt in XZ - rows along +X - center row vertical (0 deg).</text>
+
+  <text class="txt tit" x="50" y="532">3. SIDE SECTION - LOOKING +X (right end)</text>
+  <text class="txt sub" x="50" y="548">Depth along Y - wall height 3-1/2 - blue boards at z = 1-3/4.</text>
+
+  <text class="txt tit" x="730" y="532">4. ISOMETRIC ASSEMBLY (2-point perspective)</text>
+  <text class="txt sub" x="730" y="548">Exploded order: green columns - blue mid-rows - brown ends - dowels - tubes.</text>
+
+  <g id="plan" transform="translate(360, 290)">
+    <rect class="part-brown" x="-81.8" y="-52" width="163.6" height="3.5"/>
+    <rect class="part-brown" x="-81.8" y="48.5" width="163.6" height="3.5"/>
+    <rect class="part-green" x="-63.25" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="-35.25" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="-10.75" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="7.25" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="32.25" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="60.25" y="-62.6" width="3.5" height="125.1"/>
+    <line class="part-blue" x1="-81" y1="-29" x2="81" y2="-29" stroke-width="5"/>
+    <line class="part-blue" x1="-81" y1="-9" x2="81" y2="-9" stroke-width="5"/>
+    <line class="part-blue" x1="-81" y1="9" x2="81" y2="9" stroke-width="5"/>
+    <line class="part-blue" x1="-81" y1="29" x2="81" y2="29" stroke-width="5"/>
+    <g class="tube">
+      <circle cx="-45.5" cy="-43.8" r="8.3"/><circle cx="-21" cy="-43.8" r="8.3"/><circle cx="0" cy="-43.8" r="8.3"/><circle cx="21" cy="-43.8" r="8.3"/><circle cx="45.5" cy="-43.8" r="8.3"/>
+      <circle cx="-45.5" cy="-21.9" r="8.3"/><circle cx="-21" cy="-21.9" r="8.3"/><circle cx="0" cy="-21.9" r="8.3"/><circle cx="21" cy="-21.9" r="8.3"/><circle cx="45.5" cy="-21.9" r="8.3"/>
+      <circle cx="-45.5" cy="0" r="8.3"/><circle cx="-21" cy="0" r="8.3"/><circle cx="0" cy="0" r="8.3"/><circle cx="21" cy="0" r="8.3"/><circle cx="45.5" cy="0" r="8.3"/>
+      <circle cx="-45.5" cy="21.9" r="8.3"/><circle cx="-21" cy="21.9" r="8.3"/><circle cx="0" cy="21.9" r="8.3"/><circle cx="21" cy="21.9" r="8.3"/><circle cx="45.5" cy="21.9" r="8.3"/>
+      <circle cx="-45.5" cy="43.8" r="8.3"/><circle cx="-21" cy="43.8" r="8.3"/><circle cx="0" cy="43.8" r="8.3"/><circle cx="21" cy="43.8" r="8.3"/><circle cx="45.5" cy="43.8" r="8.3"/>
+    </g>
+    <ellipse class="part-dowel-m" cx="-42" cy="0" rx="7" ry="3.5"/>
+    <ellipse class="part-dowel-i" cx="-14" cy="0" rx="5.25" ry="3.5"/>
+    <ellipse class="part-dowel-i" cx="14" cy="0" rx="5.25" ry="3.5"/>
+    <ellipse class="part-dowel-m" cx="42" cy="0" rx="7" ry="3.5"/>
+    <text class="axis" x="-75" y="58">-X</text>
+    <text class="axis" x="72" y="58">+X</text>
+    <text class="axis" x="0" y="62" text-anchor="middle">rows (fan)</text>
+    <text class="axis" x="0" y="-52" text-anchor="middle">+Y back</text>
+    <text class="axis" x="0" y="52" text-anchor="middle">-Y crowd</text>
+    <line x1="0" y1="-48" x2="0" y2="48" stroke="#f0a040" stroke-width="0.8" stroke-dasharray="3 2"/>
+    <line x1="-70" y1="0" x2="70" y2="0" stroke="#f0a040" stroke-width="0.8" stroke-dasharray="3 2"/>
+    <line class="dim" x1="-81" y1="-58" x2="81" y2="-58"/>
+    <text class="lbl" x="0" y="-62" text-anchor="middle">23-3/8</text>
+    <text class="lbl" x="0" y="62" text-anchor="middle">green 17-7/8 long (+Y)</text>
+  </g>
+
+  <g transform="translate(50, 400)">
+    <rect class="part-brown" x="0" y="0" width="14" height="8"/><text class="lbl" x="20" y="8">Brown end - 23-3/8 x 3-1/2 (x2)</text>
+    <rect class="part-green" x="0" y="14" width="4" height="14"/><text class="lbl" x="20" y="24">Green divider - 17-7/8 x 3-1/2 (x6)</text>
+    <rect class="part-blue" x="0" y="32" width="14" height="4"/><text class="lbl" x="20" y="40">Blue mid row - 23-3/8 x 3-1/2 (x4)</text>
+    <circle class="part-dowel-m" cx="7" cy="52" r="5"/><text class="lbl" x="20" y="56">Dowel middle 2 in. @ +/-6 X (x2)</text>
+    <circle class="part-dowel-i" cx="7" cy="68" r="4"/><text class="lbl" x="20" y="72">Dowel inner 1.5 in. @ +/-2 X (x2)</text>
+    <circle class="tube" cx="7" cy="86" r="6"/><text class="lbl" x="20" y="90">Tube 2-3/8 OD x 12 (x25)</text>
+  </g>
+
+  <g id="front" transform="translate(1040, 320)">
+    <line x1="-200" y1="80" x2="200" y2="80" stroke="#5a9ec4" stroke-width="1"/>
+    <text class="lbl" x="0" y="95" text-anchor="middle">ground - z = 0</text>
+    <rect class="part-green" x="-95" y="35" width="8" height="45"/>
+    <rect class="part-green" x="-55" y="35" width="8" height="45"/>
+    <rect class="part-green" x="-15" y="35" width="8" height="45"/>
+    <rect class="part-green" x="25" y="35" width="8" height="45"/>
+    <rect class="part-green" x="65" y="35" width="8" height="45"/>
+    <rect class="part-green" x="87" y="35" width="8" height="45"/>
+    <rect class="part-brown" x="-100" y="10" width="200" height="12"/>
+    <line class="tube" x1="-68" y1="80" x2="-78" y2="-5" stroke-width="3"/>
+    <line class="tube" x1="-34" y1="80" x2="-38" y2="-8" stroke-width="3"/>
+    <line class="tube" x1="0" y1="80" x2="0" y2="-12" stroke-width="3"/>
+    <line class="tube" x1="34" y1="80" x2="38" y2="-8" stroke-width="3"/>
+    <line class="tube" x1="68" y1="80" x2="78" y2="-5" stroke-width="3"/>
+    <text class="lbl" x="-68" y="-12" text-anchor="middle">-12 deg</text>
+    <text class="lbl" x="-34" y="-14" text-anchor="middle">-6 deg</text>
+    <text class="lbl" x="0" y="-18" text-anchor="middle">0 deg</text>
+    <text class="lbl" x="34" y="-14" text-anchor="middle">+6 deg</text>
+    <text class="lbl" x="68" y="-12" text-anchor="middle">+12 deg</text>
+    <line class="dim" x1="-100" y1="25" x2="100" y2="25"/>
+    <text class="lbl" x="0" y="22" text-anchor="middle">wall 3-1/2 tall</text>
+    <text class="axis" x="-110" y="50">left</text>
+    <text class="axis" x="105" y="50">right +X</text>
+  </g>
+
+  <g id="side" transform="translate(360, 720)">
+    <line x1="-200" y1="60" x2="200" y2="60" stroke="#5a9ec4"/>
+    <rect class="part-green" x="-90" y="15" width="180" height="45"/>
+    <rect class="part-brown" x="-95" y="15" width="6" height="45"/>
+    <rect class="part-blue" x="-85" y="32" width="170" height="6" opacity="0.9"/>
+    <rect class="part-blue" x="-85" y="42" width="170" height="6" opacity="0.9"/>
+    <rect class="part-blue" x="-85" y="22" width="170" height="6" opacity="0.9"/>
+    <rect class="part-blue" x="-85" y="52" width="170" height="6" opacity="0.9"/>
+    <g class="tube">
+      <rect class="tube-fill" x="-70" y="18" width="8" height="40"/>
+      <rect class="tube-fill" x="-35" y="18" width="8" height="40"/>
+      <rect class="tube-fill" x="0" y="18" width="8" height="40"/>
+      <rect class="tube-fill" x="35" y="18" width="8" height="40"/>
+      <rect class="tube-fill" x="70" y="18" width="8" height="40"/>
+    </g>
+    <line class="dim" x1="120" y1="60" x2="120" y2="15"/>
+    <text class="lbl" x="128" y="38">3-1/2</text>
+    <line class="dim" x1="120" y1="32" x2="130" y2="32"/>
+    <text class="lbl" x="132" y="35" font-size="9">z=1-3/4 blue</text>
+    <text class="axis" x="-100" y="75">-Y front (crowd)</text>
+    <text class="axis" x="85" y="75">+Y back</text>
+    <text class="lbl" x="0" y="8" text-anchor="middle">depth - tube rows along Y</text>
+  </g>
+
+  <g id="iso" transform="translate(1040, 780)">
+    <line x1="-280" y1="-120" x2="120" y2="40" stroke="#1a5a8a" stroke-width="0.5" opacity="0.4"/>
+    <line x1="280" y1="-120" x2="-120" y2="40" stroke="#1a5a8a" stroke-width="0.5" opacity="0.4"/>
+    <text class="sub" x="0" y="-100" text-anchor="middle" font-size="9">vanishing lines</text>
+    <path fill="#1a3d5c" stroke="#5a9ec4" d="M -120,20 L 0,-40 L 120,20 L 120,30 L 0,-30 L -120,30 Z"/>
+    <path class="part-green" d="M -90,20 L -75,-25 L -70,-25 L -85,20 Z"/>
+    <path class="part-green" d="M -50,20 L -35,-25 L -30,-25 L -45,20 Z"/>
+    <path class="part-green" d="M -10,20 L 5,-25 L 10,-25 L -5,20 Z"/>
+    <path class="part-green" d="M 30,20 L 45,-25 L 50,-25 L 35,20 Z"/>
+    <path class="part-green" d="M 70,20 L 85,-25 L 90,-25 L 75,20 Z"/>
+    <path class="part-brown" d="M -100,15 L -20,-55 L 20,-55 L 100,15 L 95,22 L 15,-48 L -15,-48 L -95,22 Z"/>
+    <path class="part-blue" d="M -80,-5 L 0,-65 L 80,-5 L 75,2 L 0,-58 L -75,2 Z" opacity="0.85"/>
+    <path class="part-blue" d="M -80,-25 L 0,-85 L 80,-25 L 75,-18 L 0,-78 L -75,-18 Z" opacity="0.7"/>
+    <ellipse class="part-dowel-m" cx="-55" cy="-45" rx="12" ry="4" transform="rotate(-25 -55 -45)"/>
+    <ellipse class="part-dowel-i" cx="-20" cy="-50" rx="9" ry="3.5" transform="rotate(-25 -20 -50)"/>
+    <ellipse class="part-dowel-i" cx="20" cy="-50" rx="9" ry="3.5" transform="rotate(-25 20 -50)"/>
+    <ellipse class="part-dowel-m" cx="55" cy="-45" rx="12" ry="4" transform="rotate(-25 55 -45)"/>
+    <line class="tube" x1="-60" y1="10" x2="-65" y2="-70" stroke-width="2.5"/>
+    <line class="tube" x1="-25" y1="10" x2="-28" y2="-72" stroke-width="2.5"/>
+    <line class="tube" x1="0" y1="10" x2="0" y2="-75" stroke-width="2.5"/>
+    <line class="tube" x1="25" y1="10" x2="28" y2="-72" stroke-width="2.5"/>
+    <line class="tube" x1="60" y1="10" x2="65" y2="-70" stroke-width="2.5"/>
+    <g transform="translate(-200, -80)">
+      <circle class="step-bg" cx="0" cy="0" r="10"/><text class="step" x="0" y="4" text-anchor="middle">1</text>
+      <text class="lbl" x="16" y="4">Green columns</text>
+      <circle class="step-bg" cx="0" cy="22" r="10"/><text class="step" x="0" y="26" text-anchor="middle">2</text>
+      <text class="lbl" x="16" y="26">Blue mid rows</text>
+      <circle class="step-bg" cx="0" cy="44" r="10"/><text class="step" x="0" y="48" text-anchor="middle">3</text>
+      <text class="lbl" x="16" y="48">Brown ends</text>
+      <circle class="step-bg" cx="0" cy="66" r="10"/><text class="step" x="0" y="70" text-anchor="middle">4</text>
+      <text class="lbl" x="16" y="70">Dowels</text>
+      <circle class="step-bg" cx="0" cy="88" r="10"/><text class="step" x="0" y="92" text-anchor="middle">5</text>
+      <text class="lbl" x="16" y="92">Tubes (tilted)</text>
+    </g>
+  </g>
+
+  <g transform="translate(55, 580)">
+    <text class="txt tit" font-size="12">PARTS - CUT &amp; NOTCH (per rack)</text>
+    <g transform="translate(0, 20)">
+      <rect class="part-brown" x="0" y="0" width="80" height="12"/>
+      <text class="lbl" x="90" y="10">A - End wall 23-3/8 x 3-1/2 - top lap @ 6 columns - x2</text>
+      <rect class="part-green" x="0" y="22" width="12" height="60"/>
+      <text class="lbl" x="90" y="55">B - Divider 17-7/8 x 3-1/2 - bottom lap @ brown; upper @ blue - x6</text>
+      <rect class="part-blue" x="0" y="90" width="80" height="12"/>
+      <text class="lbl" x="90" y="100">C - Mid row 23-3/8 x 3-1/2 - bottom lap @ columns - x4</text>
+      <rect class="part-dowel-m" x="4" y="112" width="72" height="8" rx="4"/>
+      <text class="lbl" x="90" y="120">D - Dowel middle 2 in. OD x 17-7/8 - x2</text>
+      <rect class="part-dowel-i" x="8" y="132" width="64" height="6" rx="3"/>
+      <text class="lbl" x="90" y="140">E - Dowel inner 1.5 in. OD x 17-7/8 - x2</text>
+    </g>
+    <text class="txt sub" x="0" y="165">Half-lap depth: 1-3/4 in. (half of 3-1/2 wall). Dowel seat: 1 in. above blue top.</text>
+    <text class="txt sub" x="0" y="180">x2 racks: 24 plywood + 8 dowels + 50 tubes - see BOM.md</text>
+  </g>
+
+  <g transform="translate(1100, 920)">
+    <rect fill="#0a2540" stroke="#3a7aaa" width="280" height="48" rx="2"/>
+    <text class="lbl" x="10" y="18">REV - finale-mortar-rack</text>
+    <text class="lbl" x="10" y="34">DRAWN - config.scad layout</text>
+    <text class="lbl" x="10" y="48">VIEWS - plan - front - side - iso</text>
+  </g>
+</svg>
