@@ -136,10 +136,117 @@
       overflow: hidden;
     }
 
+    .map-wrap {
+      position: relative;
+    }
+
     #map {
-      height: 380px;
+      height: 420px;
       width: 100%;
       background: #1a1f2e;
+    }
+
+    #map.draw-mode-active { cursor: crosshair; }
+
+    .map-toolbar {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      right: 0.5rem;
+      z-index: 1000;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .map-toolbar .toolbar-inner {
+      pointer-events: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 0.4rem;
+      background: rgba(12, 14, 20, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .map-toolbar button {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .map-toolbar button:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .map-toolbar button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .map-toolbar button.active {
+      background: var(--accent);
+      color: #0c0e14;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .map-toolbar .draw-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 0 0.25rem;
+      align-self: center;
+    }
+
+    .lines-panel {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .lines-panel h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .lines-panel ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .lines-panel li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lines-panel li:last-child { border-bottom: none; }
+
+    .lines-panel .line-swatch {
+      width: 20px;
+      height: 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .lines-panel .line-meta { flex: 1; color: var(--muted); }
+
+    .lines-panel button.line-delete {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.45rem;
     }
 
     .zone-legend {
@@ -353,7 +460,23 @@
       <h2><span class="badge">Zone</span> Zone definitions</h2>
       <p class="section-lead" id="zone-description">Loading…</p>
       <div class="card">
-        <div id="map" role="img" aria-label="Map of deployment and crowd zones"></div>
+        <div class="map-wrap">
+          <div class="map-toolbar" aria-label="Map drawing tools">
+            <div class="toolbar-inner">
+              <button type="button" id="btn-draw-toggle" title="Click map to place line points">Draw line</button>
+              <button type="button" id="btn-draw-finish" disabled>Finish</button>
+              <button type="button" id="btn-draw-undo" disabled>Undo</button>
+              <button type="button" id="btn-draw-cancel" disabled>Cancel</button>
+              <button type="button" id="btn-copy-lines" title="Copy JSON for data/lines.json">Copy lines JSON</button>
+              <span class="draw-hint" id="draw-hint">Click points on the map · Finish when done</span>
+            </div>
+          </div>
+          <div id="map" role="application" aria-label="Field map with zones and drawable lines"></div>
+        </div>
+        <div class="lines-panel" id="lines-panel" hidden>
+          <h3>Lines on map</h3>
+          <ul id="lines-list"></ul>
+        </div>
         <div class="zone-legend" id="zone-legend"></div>
         <div id="zone-coords"></div>
         <div class="links-row" id="zone-links"></div>
@@ -361,6 +484,7 @@
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/zone.json</code> —
         <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>bonfire</code> | <code>deployment</code> | <code>safety</code> | <code>crowd</code>), bounds, and vertices.
+        Draw lines on the map or edit <code>data/lines.json</code> (<code>points</code>: <code>{lat,lng}</code> arrays).
       </p>
     </section>
 
@@ -401,6 +525,16 @@
   ></script>
   <script>
     const DATA_BASE = "data";
+    const LINES_STORAGE_KEY = "fireworks-display-2026-lines";
+    const DEFAULT_LINE_COLOR = "#f97316";
+    const DEFAULT_LINE_WEIGHT = 3;
+
+    let fieldMap = null;
+    let mapLinesLayer = null;
+    let repoLines = [];
+    let localLines = [];
+    let drawDraft = { points: [], polyline: null, markers: [] };
+    let drawModeActive = false;
 
     const ZONE_STYLES = {
       bonfire: {
@@ -449,6 +583,228 @@
       const res = await fetch(`${DATA_BASE}/${name}`);
       if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
       return res.json();
+    }
+
+    async function loadJsonOptional(name, fallback) {
+      try {
+        return await loadJson(name);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function loadLocalLines() {
+      try {
+        const raw = localStorage.getItem(LINES_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLocalLines() {
+      localStorage.setItem(LINES_STORAGE_KEY, JSON.stringify(localLines));
+    }
+
+    function allLines() {
+      return [...repoLines, ...localLines];
+    }
+
+    function lineToLatLngs(line) {
+      return (line.points || []).map((p) => [p.lat, p.lng]);
+    }
+
+    function clearDrawDraft() {
+      if (drawDraft.polyline) {
+        fieldMap.removeLayer(drawDraft.polyline);
+        drawDraft.polyline = null;
+      }
+      drawDraft.markers.forEach((m) => fieldMap.removeLayer(m));
+      drawDraft.markers = [];
+      drawDraft.points = [];
+    }
+
+    function updateDrawDraftLayer() {
+      if (!fieldMap) return;
+      if (drawDraft.polyline) fieldMap.removeLayer(drawDraft.polyline);
+      if (drawDraft.points.length >= 2) {
+        drawDraft.polyline = L.polyline(drawDraft.points, {
+          color: DEFAULT_LINE_COLOR,
+          weight: DEFAULT_LINE_WEIGHT,
+          dashArray: "8 6",
+          opacity: 0.9,
+        }).addTo(fieldMap);
+      } else {
+        drawDraft.polyline = null;
+      }
+      drawDraft.markers.forEach((m) => fieldMap.removeLayer(m));
+      drawDraft.markers = drawDraft.points.map((pt) =>
+        L.circleMarker(pt, {
+          radius: 4,
+          color: "#fff",
+          fillColor: DEFAULT_LINE_COLOR,
+          fillOpacity: 1,
+          weight: 2,
+        }).addTo(fieldMap)
+      );
+    }
+
+    function setDrawMode(on) {
+      drawModeActive = on;
+      const mapEl = document.getElementById("map");
+      const btn = document.getElementById("btn-draw-toggle");
+      mapEl.classList.toggle("draw-mode-active", on);
+      btn.classList.toggle("active", on);
+      btn.textContent = on ? "Drawing…" : "Draw line";
+      document.getElementById("draw-hint").textContent = on
+        ? "Click the map to add points"
+        : "Click points on the map · Finish when done";
+      if (fieldMap) {
+        if (on) fieldMap.doubleClickZoom.disable();
+        else fieldMap.doubleClickZoom.enable();
+      }
+      updateDrawUi();
+    }
+
+    function updateDrawUi() {
+      const n = drawDraft.points.length;
+      document.getElementById("btn-draw-finish").disabled = n < 2;
+      document.getElementById("btn-draw-undo").disabled = n === 0;
+      document.getElementById("btn-draw-cancel").disabled = n === 0 && !drawModeActive;
+    }
+
+    function renderLinesOnMap() {
+      if (!mapLinesLayer) return;
+      mapLinesLayer.clearLayers();
+      allLines().forEach((line) => {
+        const latLngs = lineToLatLngs(line);
+        if (latLngs.length < 2) return;
+        const layer = L.polyline(latLngs, {
+          color: line.color || DEFAULT_LINE_COLOR,
+          weight: line.weight || DEFAULT_LINE_WEIGHT,
+          opacity: 0.95,
+        });
+        const label = line.label || line.id || "Line";
+        layer.bindPopup(`<strong>${escapeHtml(label)}</strong><br>${latLngs.length} points`);
+        mapLinesLayer.addLayer(layer);
+      });
+    }
+
+    function updateLinesPanel() {
+      const lines = allLines();
+      const panel = document.getElementById("lines-panel");
+      const list = document.getElementById("lines-list");
+      if (lines.length === 0) {
+        panel.hidden = true;
+        return;
+      }
+      panel.hidden = false;
+      list.innerHTML = lines
+        .map((line) => {
+          const isLocal = line._local;
+          const label = escapeHtml(line.label || line.id || "Line");
+          const color = line.color || DEFAULT_LINE_COLOR;
+          const pts = (line.points || []).length;
+          const deleteBtn = isLocal
+            ? `<button type="button" class="line-delete" data-local-id="${escapeHtml(line.id)}">Remove</button>`
+            : `<span class="line-meta">in repo</span>`;
+          return `<li>
+            <span class="line-swatch" style="background:${color}"></span>
+            <span class="line-meta"><strong>${label}</strong> · ${pts} pts</span>
+            ${deleteBtn}
+          </li>`;
+        })
+        .join("");
+      list.querySelectorAll(".line-delete").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-local-id");
+          localLines = localLines.filter((l) => l.id !== id);
+          saveLocalLines();
+          renderLinesOnMap();
+          updateLinesPanel();
+        });
+      });
+    }
+
+    function setupLineDrawing() {
+      const toggle = document.getElementById("btn-draw-toggle");
+      const finish = document.getElementById("btn-draw-finish");
+      const undo = document.getElementById("btn-draw-undo");
+      const cancel = document.getElementById("btn-draw-cancel");
+      const copyBtn = document.getElementById("btn-copy-lines");
+
+      toggle.addEventListener("click", () => {
+        if (drawModeActive) {
+          setDrawMode(false);
+          clearDrawDraft();
+          updateDrawDraftLayer();
+        } else {
+          clearDrawDraft();
+          setDrawMode(true);
+        }
+        updateDrawUi();
+      });
+
+      finish.addEventListener("click", () => {
+        if (drawDraft.points.length < 2) return;
+        const label = prompt("Line label (optional):", `Line ${localLines.length + 1}`);
+        const points = drawDraft.points.map(([lat, lng]) => ({
+          lat: Math.round(lat * 1e6) / 1e6,
+          lng: Math.round(lng * 1e6) / 1e6,
+        }));
+        localLines.push({
+          id: `line-${Date.now()}`,
+          label: label || undefined,
+          color: DEFAULT_LINE_COLOR,
+          weight: DEFAULT_LINE_WEIGHT,
+          points,
+          _local: true,
+        });
+        saveLocalLines();
+        clearDrawDraft();
+        setDrawMode(false);
+        renderLinesOnMap();
+        updateLinesPanel();
+        updateDrawUi();
+      });
+
+      undo.addEventListener("click", () => {
+        drawDraft.points.pop();
+        updateDrawDraftLayer();
+        updateDrawUi();
+      });
+
+      cancel.addEventListener("click", () => {
+        clearDrawDraft();
+        setDrawMode(false);
+        updateDrawDraftLayer();
+        updateDrawUi();
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const payload = {
+          description: "Paths and markings drawn on the field map.",
+          lines: allLines().map(({ _local, ...line }) => line),
+        };
+        const text = JSON.stringify(payload, null, 2);
+        try {
+          await navigator.clipboard.writeText(text);
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy lines JSON";
+          }, 2000);
+        } catch {
+          prompt("Copy this into data/lines.json:", text);
+        }
+      });
+
+      fieldMap.on("click", (e) => {
+        if (!drawModeActive) return;
+        L.DomEvent.stopPropagation(e);
+        drawDraft.points.push([e.latlng.lat, e.latlng.lng]);
+        updateDrawDraftLayer();
+        updateDrawUi();
+      });
     }
 
     const METERS_PER_DEG_LAT = 111320;
@@ -654,6 +1010,12 @@
       map.fitBounds(group.getBounds(), { padding: [28, 28] });
       const fitZoom = map.getZoom();
       map.setZoom(Math.max(fitZoom - 4, map.getMinZoom()));
+
+      fieldMap = map;
+      mapLinesLayer = L.featureGroup().addTo(fieldMap);
+      renderLinesOnMap();
+      setupLineDrawing();
+      updateLinesPanel();
     }
 
     function renderPlacement(placement, zoneData) {
@@ -758,12 +1120,15 @@
 
     async function init() {
       try {
-        const [zone, placement, sequence] = await Promise.all([
+        const [zone, placement, sequence, linesData] = await Promise.all([
           loadJson("zone.json"),
           loadJson("placement.json"),
           loadJson("sequence.json"),
+          loadJsonOptional("lines.json", { lines: [] }),
         ]);
 
+        repoLines = linesData.lines || [];
+        localLines = loadLocalLines();
         renderZones(zone);
         renderPlacement(placement, zone);
         renderSequence(sequence);
