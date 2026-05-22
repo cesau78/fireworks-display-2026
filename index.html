@@ -853,18 +853,21 @@
       const topY = 36;
       const x0 = pad;
       const x1 = pad + legPx;
-      const cx = x1 + rPx;
-      const cy = topY;
       const botY = topY + 2 * rPx;
+      const arcCx = x1;
+      const arcCy = topY + rPx;
       const points = [];
 
+      // Top leg: start top-left → right
       for (let i = 0; i <= 32; i++) {
         points.push([x0 + (legPx * i) / 32, topY]);
       }
+      // Semicircle on the right: bulges outward ( +x ), connects top to bottom vertical
       for (let a = 0; a <= 32; a++) {
-        const ang = Math.PI - (Math.PI * a) / 32;
-        points.push([cx + rPx * Math.cos(ang), cy + rPx * Math.sin(ang)]);
+        const ang = -Math.PI / 2 + (Math.PI * a) / 32;
+        points.push([arcCx + rPx * Math.cos(ang), arcCy + rPx * Math.sin(ang)]);
       }
+      // Bottom leg: return left
       for (let i = 1; i <= 32; i++) {
         points.push([x1 - (legPx * i) / 32, botY]);
       }
@@ -876,7 +879,7 @@
       return {
         points,
         pathD,
-        width: cx + rPx + pad,
+        width: x1 + rPx + pad,
         height: botY + pad,
         maxDistFt: 300,
       };
