@@ -1647,7 +1647,7 @@
 
       map.fitBounds(fitBounds, { padding: [28, 28] });
       const fitZoom = map.getZoom();
-      map.setZoom(Math.max(fitZoom - 4, map.getMinZoom()));
+      map.setZoom(Math.max(fitZoom - 1, map.getMinZoom()));
 
       fieldMap = map;
       mapLinesLayer = L.featureGroup().addTo(fieldMap);
