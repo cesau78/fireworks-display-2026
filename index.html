@@ -367,11 +367,6 @@
       border: none !important;
     }
 
-    .fuse-arrow-icon {
-      background: transparent !important;
-      border: none !important;
-    }
-
     .fuse-arrow-icon svg {
       display: block;
       overflow: visible;
@@ -390,7 +385,7 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: rgba(124, 58, 237, 0.92);
+      background: rgba(37, 99, 235, 0.92);
       border: 2px solid #fff;
       color: #fff;
       font-size: 0.6rem;
@@ -545,7 +540,7 @@
       </div>
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/firing-sequence.csv</code> —
-        fuse placement at <code>(start − show start) ÷ 15</code> seconds per foot along the 300 ft path.
+        fuse placement at <code>(start − show start) ÷ 12</code> seconds per foot along the 300 ft path.
       </p>
     </section>
   </main>
@@ -565,7 +560,7 @@
     const LINES_STORAGE_KEY = "fireworks-display-2026-lines";
     const DEFAULT_LINE_COLOR = "#f97316";
     const DEFAULT_LINE_WEIGHT = 3;
-    const FUSE_BURN_SEC_PER_FT = 15;
+    const FUSE_BURN_SEC_PER_FT = 12;
 
     let fieldMap = null;
     let mapLinesLayer = null;
@@ -1221,7 +1216,7 @@
         : "";
       const placementLegend =
         firingSequenceRows.length > 0
-          ? `<span><i style="border-color:#fff;background:#7c3aed;border-radius:50%"></i>Show cues (${firingSequenceRows.length})</span>`
+          ? `<span><i style="border-color:#fff;background:#2563eb;border-radius:50%"></i>Show cues (${firingSequenceRows.length})</span>`
           : "";
       document.getElementById("zone-legend").innerHTML = zoneLegend + fuseLegend + placementLegend;
 
@@ -1364,7 +1359,7 @@
 
       if (firingSequenceRows.length === 0) {
         document.getElementById("sequence-description").textContent =
-          "Firing order from CSV (fuse burns 15 seconds per foot).";
+          "Firing order from CSV (fuse burns 12 seconds per foot).";
         wrap.innerHTML = `
           <div class="empty-state">
             Add <code>data/firing-sequence.csv</code> to show the show sequence and fuse placements.

@@ -20,7 +20,7 @@ Edit JSON under `data/` via pull requests:
 |------|---------|
 | `data/zone.json` | Zone boundaries (`zones[]`: deployment, crowd, …) |
 | `data/placement.json` | Mortar/rack positions (`id`, `lat`, `lng`, `label`, `notes`) |
-| `data/firing-sequence.csv` | Show sequence; fuse placement at 15 sec/ft from show start |
+| `data/firing-sequence.csv` | Show sequence; fuse placement at 12 sec/ft from show start |
 | `data/sequence.json` | Legacy (optional); CSV drives the sequence table and map markers |
 | `data/lines.json` | Map lines (`points`: `{lat,lng}` arrays); or draw on site and copy JSON |
 
