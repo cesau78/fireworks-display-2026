@@ -362,6 +362,22 @@
       font-weight: 500;
     }
 
+    .fuse-arrow-icon {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .fuse-arrow-icon span {
+      display: block;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 10px solid #dc2626;
+      filter: drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+      transform-origin: 50% 80%;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -620,6 +636,61 @@
       return (line.points || []).map((p) => [p.lat, p.lng]);
     }
 
+    function segmentLengthFeet(a, b) {
+      const midLat = (a[0] + b[0]) / 2;
+      const dLatFt = (b[0] - a[0]) * METERS_PER_DEG_LAT * FEET_PER_METER;
+      const dLngFt =
+        (b[1] - a[1]) * METERS_PER_DEG_LAT * Math.cos((midLat * Math.PI) / 180) * FEET_PER_METER;
+      return Math.hypot(dLngFt, dLatFt);
+    }
+
+    function bearingDegrees(a, b) {
+      const dLat = b[0] - a[0];
+      const dLng = b[1] - a[1];
+      const midLat = ((a[0] + b[0]) / 2) * (Math.PI / 180);
+      const x = dLng * Math.cos(midLat);
+      const y = dLat;
+      return (Math.atan2(x, y) * 180) / Math.PI;
+    }
+
+    function pointAlongPath(latLngs, targetFt) {
+      let traveled = 0;
+      for (let i = 0; i < latLngs.length - 1; i++) {
+        const segLen = segmentLengthFeet(latLngs[i], latLngs[i + 1]);
+        if (traveled + segLen >= targetFt) {
+          const t = (targetFt - traveled) / segLen;
+          const lat = latLngs[i][0] + t * (latLngs[i + 1][0] - latLngs[i][0]);
+          const lng = latLngs[i][1] + t * (latLngs[i + 1][1] - latLngs[i][1]);
+          return {
+            lat,
+            lng,
+            bearing: bearingDegrees(latLngs[i], latLngs[i + 1]),
+          };
+        }
+        traveled += segLen;
+      }
+      return null;
+    }
+
+    function addFuseArrows(map, latLngs, intervalFt) {
+      const total = latLngs.reduce(
+        (sum, _, i) => (i < latLngs.length - 1 ? sum + segmentLengthFeet(latLngs[i], latLngs[i + 1]) : sum),
+        0
+      );
+      for (let d = intervalFt; d < total; d += intervalFt) {
+        const pt = pointAlongPath(latLngs, d);
+        if (!pt) continue;
+        const icon = L.divIcon({
+          className: "fuse-arrow-icon",
+          html: `<span style="transform: rotate(${pt.bearing}deg)"></span>`,
+          iconSize: [12, 12],
+          iconAnchor: [6, 10],
+        });
+        const marker = L.marker([pt.lat, pt.lng], { icon, interactive: false });
+        mapLinesLayer.addLayer(marker);
+      }
+    }
+
     function clearDrawDraft() {
       if (drawDraft.polyline) {
         fieldMap.removeLayer(drawDraft.polyline);
@@ -685,14 +756,29 @@
       allLines().forEach((line) => {
         const latLngs = lineToLatLngs(line);
         if (latLngs.length < 2) return;
+        const isFuse = line.type === "fuse";
         const layer = L.polyline(latLngs, {
-          color: line.color || DEFAULT_LINE_COLOR,
-          weight: line.weight || DEFAULT_LINE_WEIGHT,
-          opacity: 0.95,
+          color: line.color || (isFuse ? "#dc2626" : DEFAULT_LINE_COLOR),
+          weight: line.weight || (isFuse ? 4 : DEFAULT_LINE_WEIGHT),
+          opacity: 0.98,
+          dashArray: isFuse ? null : undefined,
         });
         const label = line.label || line.id || "Line";
-        layer.bindPopup(`<strong>${escapeHtml(label)}</strong><br>${latLngs.length} points`);
+        const totalFt = latLngs.reduce(
+          (sum, _, i) =>
+            i < latLngs.length - 1 ? sum + segmentLengthFeet(latLngs[i], latLngs[i + 1]) : sum,
+          0
+        );
+        const lenNote = line.length_ft
+          ? `${line.length_ft} ft design`
+          : `${Math.round(totalFt)} ft`;
+        layer.bindPopup(
+          `<strong>${escapeHtml(label)}</strong><br>${lenNote} · ${latLngs.length} points`
+        );
         mapLinesLayer.addLayer(layer);
+        if (isFuse && line.arrow_interval_ft) {
+          addFuseArrows(fieldMap, latLngs, line.arrow_interval_ft);
+        }
       });
     }
 
