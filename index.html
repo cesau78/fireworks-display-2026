@@ -1404,6 +1404,63 @@
       return ZONE_STYLES[zone.role] || ZONE_STYLES.deployment;
     }
 
+    function lerpHex(hex1, hex2, t) {
+      const parse = (h) => {
+        const n = parseInt(h.slice(1), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      };
+      const [r1, g1, b1] = parse(hex1);
+      const [r2, g2, b2] = parse(hex2);
+      const ch = (a, b) => Math.round(a + (b - a) * t);
+      const r = ch(r1, r2);
+      const g = ch(g1, g2);
+      const b = ch(b1, b2);
+      return `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
+    }
+
+    function addCrowdGradientZone(map, zone, group) {
+      const b = zone.bounds;
+      const strips = 16;
+      const green = "#22c55e";
+      const yellow = "#facc15";
+
+      for (let i = 0; i < strips; i++) {
+        const latSouth = b.south + ((b.north - b.south) * i) / strips;
+        const latNorth = b.south + ((b.north - b.south) * (i + 1)) / strips;
+        const color = lerpHex(green, yellow, (i + 0.5) / strips);
+        const strip = L.polygon(
+          [
+            [latSouth, b.west],
+            [latSouth, b.east],
+            [latNorth, b.east],
+            [latNorth, b.west],
+          ],
+          {
+            color,
+            weight: 0,
+            fillColor: color,
+            fillOpacity: 0.55,
+            pane: "zonesPane",
+          }
+        ).addTo(map);
+        strip.bindPopup(`<strong>${escapeHtml(zone.name)}</strong><br>Green (south) → yellow (north)`);
+        group.addLayer(strip);
+      }
+
+      const outline = L.polygon(
+        zone.vertices.map((v) => [v.lat, v.lng]),
+        {
+          color: "#86efac",
+          weight: 3,
+          fill: false,
+          fillOpacity: 0,
+          pane: "zonesPane",
+        }
+      ).addTo(map);
+      outline.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
+      group.addLayer(outline);
+    }
+
     function combinedBounds(zones) {
       return zones.reduce(
         (acc, z) => ({
@@ -1462,7 +1519,11 @@
       const zoneLegend = zones
         .map((z) => {
           const s = zoneStyle(z);
-          return `<span><i style="border-color:${s.color};background:${s.fillColor}"></i>${escapeHtml(z.name)}</span>`;
+          const swatch =
+            z.role === "crowd"
+              ? "border-color:#86efac;background:linear-gradient(to top,#22c55e,#facc15)"
+              : `border-color:${s.color};background:${s.fillColor}`;
+          return `<span><i style="${swatch}"></i>${escapeHtml(z.name)}</span>`;
         })
         .join("");
       const hasFuse = allLines().some((l) => l.type === "fuse");
@@ -1521,17 +1582,21 @@
 
       zones.forEach((zone) => {
         const style = zoneStyle(zone);
-        const latLngs = zone.vertices.map((v) => [v.lat, v.lng]);
-        const polygon = L.polygon(latLngs, {
-          color: style.color,
-          weight: 3,
-          fillColor: style.fillColor,
-          fillOpacity: style.fillOpacity,
-          pane: "zonesPane",
-        }).addTo(map);
 
-        polygon.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
-        group.addLayer(polygon);
+        if (zone.role === "crowd") {
+          addCrowdGradientZone(map, zone, group);
+        } else {
+          const latLngs = zone.vertices.map((v) => [v.lat, v.lng]);
+          const polygon = L.polygon(latLngs, {
+            color: style.color,
+            weight: 3,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+            pane: "zonesPane",
+          }).addTo(map);
+          polygon.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
+          group.addLayer(polygon);
+        }
 
         zone.vertices.forEach((v, i) => {
           const marker = L.circleMarker([v.lat, v.lng], {
