@@ -44,7 +44,7 @@ end_wall_inner_offset_from_center_y = [
   7.438,  // back inner face
 ];
 
-column_board_extension_in = 3; // +length along Y total (1-1/2 in. each end), centered on rack Y
+green_board_length_in = 18; // green dividers + dowels along +Y; centered on rack Y (layout column_board_y0)
 end_wall_extension_in = 1; // brown ends: +1 in. per side in X (panel plane)
 column_end_half_lap = true; // half-lap: columns lose bottom half, rows lose top half
 middle_row_half_lap = true; // mid-height row dividers: bottom half out; columns lose top of upper half

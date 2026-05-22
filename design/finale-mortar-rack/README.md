@@ -13,8 +13,8 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 | Material | Amount |
 |----------|--------|
 | 4×8 sheet, 1/2 in. thick | **1 sheet** — 4 brown + 12 green + 8 blue wall boards |
-| 2 in. dowel rod | **≥6 ft** — 4× middle dowels @ 17-7/8 in. |
-| 1-1/2 in. dowel rod | **≥6 ft** — 4× inner dowels @ 17-7/8 in. |
+| 2 in. dowel rod | **≥6 ft** — 4× middle dowels @ 18 in. |
+| 1-1/2 in. dowel rod | **≥6 ft** — 4× inner dowels @ 18 in. |
 | Mortar tubes (2-3/8 in. OD × 12 in.) | **50** (25 per rack) |
 | Class C 2 in. shells | **50** (finale cues 47–96) |
 
@@ -22,7 +22,7 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 
 1. **Lay out cuts** — Use the [cut list in `BOM.md`](BOM.md#cut-list--two-racks-build-qty). Cut all **24** wall board blanks before notching (same sizes repeat rack to rack).
 2. **Notch** — Follow the [assembly order](#assembly-order) below: green columns → brown ends → blue mid rows. Half-lap depth is **1-3/4 in.** (half of 3-1/2 in. wall height).
-3. **Dowels** — Rip or buy **2 in.** and **1-1/2 in.** rod; cut eight pieces to **17-7/8 in.** Match `row-dowel-top-middle.scad` and `row-dowel-top-inner.scad`.
+3. **Dowels** — Rip or buy **2 in.** and **1-1/2 in.** rod; cut eight pieces to **18 in.** Match `row-dowel-top-middle.scad` and `row-dowel-top-inner.scad`.
 4. **Assemble rack A** — Dry-fit half-laps → fasten → install **4 dowels** (middle ±6 in. X, inner ±2 in. X) → load **25 tubes** with column tilt per [row angles](#row-angles).
 5. **Assemble rack B** — Repeat step 4. Mark **A** / **B** on the frame if you split shell numbers between racks.
 6. **Field** — Place racks **side by side** (fan along **+X**). Wire per `data/firing-sequence.csv` (e.g. shells **47–71** on A, **72–96** on B, or mirror your fuse layout).
@@ -88,6 +88,7 @@ Rack center is **X = 0**. Tune each column independently:
 |-------|-------|---------|
 | `column_tube_offset_from_center_in` | 5 | Tube centerline X per column (0–4) |
 | `divider_offset_from_center_in` | 6 | Green divider centerline X — `[0]` left side … `[5]` right side |
+| `green_board_length_in` | — | Green divider + dowel length along **Y** (18 in.; centered on rack) |
 | `row_dowel_x_offset_from_center_in` | 4 | Top dowel centerline **X** (with `row_dowel_bay_i` / `row_dowel_tube_column_i`) |
 | `row_dowel_od_middle_in` / `row_dowel_od_inner_in` | — | OD for `row-dowel-top-middle.scad` / `row-dowel-top-inner.scad` |
 | `row_dowel_middle_i` / `row_dowel_inner_i` | — | Indices into the arrays above per dowel type |
@@ -98,11 +99,11 @@ Negative X = left; negative Y = front. Rack origin is **X = 0, Y = 0** (center c
 
 Defaults restore the prior 2-1/2 in. center slot (`divider` 1 & 2 at ±1.5 in.) and middle L/R tubes bottom-flush to those boards.
 
-All six green dividers share the same cut (**17-7/8 × 3-1/2 in.** with `column_board_extension_in`); only X positions differ. Row and column boards are **3-1/2 in.** tall (`wall_height_in`). At crossings, **columns** lose the **bottom** half and **brown rows** lose the **top** half (`column_end_half_lap`).
+All six green dividers share the same cut (**18 × 3-1/2 in.** via `green_board_length_in`); only X positions differ. Boards stay centered on rack **Y** (equal overhang past the brown end inner faces). Row and column boards are **3-1/2 in.** tall (`wall_height_in`). At crossings, **columns** lose the **bottom** half and **brown rows** lose the **top** half (`column_end_half_lap`).
 
 **Second layer:** four **blue** mid-height row dividers run front–back (like brown ends) between tube rows along **Y**, starting at **z = 1-3/4 in.** (half column height). Height **3-1/2 in.** (same as columns); **bottom** half notched at each column X; columns lose the **top** of their upper band at those Y positions (`middle_row_half_lap`).
 
-**Top dowels:** two primitives — `row-dowel-top-middle.scad` (**2 in.** OD, ±6 in. X) and `row-dowel-top-inner.scad` (**1.5 in.** OD, ±2 in. X). Each is a cylinder along **+Y** with its origin at the geometric center. `rack.scad` places **four** instances via `row_dowel_middle_i` / `row_dowel_inner_i`, `row_dowel_x_offset_from_center_in`, and `row_dowel_center_z_in(i)`. Length **17-7/8 in.** (green boards). Tubes are cut per instance.
+**Top dowels:** two primitives — `row-dowel-top-middle.scad` (**2 in.** OD, ±6 in. X) and `row-dowel-top-inner.scad` (**1.5 in.** OD, ±2 in. X). Each is a cylinder along **+Y** with its origin at the geometric center. `rack.scad` places **four** instances via `row_dowel_middle_i` / `row_dowel_inner_i`, `row_dowel_x_offset_from_center_in`, and `row_dowel_center_z_in(i)`. Length **18 in.** (green boards). Tubes are cut per instance.
 
 ## Blueprints
 
@@ -197,7 +198,7 @@ Board height **3-1/2 in.** Lap depth **1-3/4 in.** (half height). Column boards 
 
 ### Assembly order (repeat for each rack)
 
-1. **Cut** — per [`BOM.md`](BOM.md): 2× brown **23-3/8 × 3-1/2**, 6× green **17-7/8 × 3-1/2**, 4× blue **23-3/8 × 3-1/2**, 2× middle dowel **2 in. OD × 17-7/8**, 2× inner dowel **1.5 in. OD × 17-7/8**.
+1. **Cut** — per [`BOM.md`](BOM.md): 2× brown **23-3/8 × 3-1/2**, 6× green **18 × 3-1/2**, 4× blue **23-3/8 × 3-1/2**, 2× middle dowel **2 in. OD × 18**, 2× inner dowel **1.5 in. OD × 18**.
 2. **Notch columns** — bottom-half at front/back; top-of-upper-half at four mid-row Y (`column-board-bottom.scad`).
 3. **Notch brown rows** — top-half at all six column X (`row-board-bottom.scad`).
 4. **Notch blue rows** — bottom-half at all six column X (`row-board-middle.scad`).
@@ -235,10 +236,10 @@ flowchart LR
 | Part | Size |
 |------|------|
 | Brown end walls (front & back) | **23-3/8 × 3-1/2 in.** (`end_wall_extension_in` +1 in./side in X) |
-| Green dividers (6 along +X) | 1/2 in. × **17-7/8 × 3-1/2 in.** |
+| Green dividers (6 along +X) | 1/2 in. × **18 × 3-1/2 in.** |
 | Blue mid row dividers (4 along Y) | **23-3/8 × 3-1/2 in.** (starts at z = 1-3/4) |
-| Dowels middle (2/rack) | **2 in.** OD × **17-7/8 in.** (`row-dowel-top-middle.scad`, ±6 in. X) |
-| Dowels inner (2/rack) | **1.5 in.** OD × **17-7/8 in.** (`row-dowel-top-inner.scad`, ±2 in. X) |
+| Dowels middle (2/rack) | **2 in.** OD × **18 in.** (`row-dowel-top-middle.scad`, ±6 in. X) |
+| Dowels inner (2/rack) | **1.5 in.** OD × **18 in.** (`row-dowel-top-inner.scad`, ±2 in. X) |
 
 Footprint widens **~2-3/4 in.** per side for fan tilt so tubes do not hit the side dividers.
 

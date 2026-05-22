@@ -1,4 +1,4 @@
-// Single middle dowel (2 in. OD x 17-7/8 in.).
+// Single middle dowel (2 in. OD x 18 in.).
 $fn = 48;
 preview = false;
 include <../config.scad>

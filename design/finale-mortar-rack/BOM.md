@@ -11,8 +11,8 @@ OpenSCAD source: `rack.scad` · Machine-readable list: `data/finale-rack-bom.jso
 | Item | Qty | Notes |
 |------|-----|--------|
 | **4×8 sheet, 1/2 in. thick** | **1 sheet** | All brown, green, and blue wall boards for **both** racks (~12 sq ft of cuts on a 32 sq ft sheet) |
-| **2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 17-7/8 in. (`row-dowel-top-middle.scad`) |
-| **1-1/2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 17-7/8 in. (`row-dowel-top-inner.scad`) |
+| **2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 18 in. (`row-dowel-top-middle.scad`) |
+| **1-1/2 in. dowel rod** | **1 stick** (≥6 ft) | Four pieces × 18 in. (`row-dowel-top-inner.scad`) |
 | **Mortar tubes** | **50** | 2-3/8 in. OD × 12 in. long (25 per rack; often already on hand) |
 | **Class C 2 in. shells** | **50** | Commander finale block |
 
@@ -27,10 +27,10 @@ All wall boards **1/2 in.** thick, height **3-1/2 in.** (`wall_height_in`). Notc
 | Qty | Part | Cut size | OpenSCAD / notes |
 |-----|------|----------|------------------|
 | 2 | End wall (brown, front & back) | **23-3/8 × 3-1/2 in.** | `row-board-bottom.scad` — +1 in. each side in X; **top** half notched at 6 column X |
-| 6 | Green divider (+X) | **17-7/8 × 3-1/2 in.** | `column-board-bottom.scad` — same blank each; **bottom** half at brown; **top** of upper band at 4 blue Y |
+| 6 | Green divider (+X) | **18 × 3-1/2 in.** | `column-board-bottom.scad` — same blank each; **bottom** half at brown; **top** of upper band at 4 blue Y |
 | 4 | Blue mid row divider | **23-3/8 × 3-1/2 in.** | `row-board-middle.scad` — between tube rows; bottom edge at **z = 1-3/4**; **bottom** half at 6 column X |
-| 2 | Dowel middle (±6 in. X) | **2 in. OD × 17-7/8 in.** | `row-dowel-top-middle.scad` |
-| 2 | Dowel inner (±2 in. X) | **1.5 in. OD × 17-7/8 in.** | `row-dowel-top-inner.scad` |
+| 2 | Dowel middle (±6 in. X) | **2 in. OD × 18 in.** | `row-dowel-top-middle.scad` |
+| 2 | Dowel inner (±2 in. X) | **1.5 in. OD × 18 in.** | `row-dowel-top-inner.scad` |
 
 **Wall boards per rack:** 12 pieces · **Dowels per rack:** 4 pieces · **Tubes per rack:** 25
 
@@ -77,7 +77,7 @@ Install after frame dry-fit; bottom of dowel **1 in.** above top of blue mid-row
 | Color | Part |
 |-------|------|
 | Tan | End wall (23-3/8 × 3-1/2 in.) |
-| Green | Divider (+X): 17-7/8 × 3-1/2 in. (6× same) |
+| Green | Divider (+X): 18 × 3-1/2 in. (6× same) |
 | Blue | Mid row divider: 23-3/8 × 3-1/2 in. (4× same) |
 | Gold / brown dowel | Middle dowel (2 in. OD) |
 | Darker dowel | Inner dowel (1.5 in. OD) |

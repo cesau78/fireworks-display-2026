@@ -40,7 +40,7 @@ function end_wall_height_in() = wall_height_in;
 function tube_center_y(col_i) =
   rack_center_y() + depth_tube_offset_from_center_in[col_i];
 
-function column_board_length_in() = footprint_d_in() + column_board_extension_in;
+function column_board_length_in() = green_board_length_in;
 function column_board_y0() =
   rack_center_y() - column_board_length_in() / 2;
 function board_half_lap_z_in() = wall_height_in / 2;

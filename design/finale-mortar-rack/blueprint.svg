@@ -56,12 +56,12 @@
   <g id="plan" transform="translate(360, 290)">
     <rect class="part-brown" x="-81.8" y="-52" width="163.6" height="3.5"/>
     <rect class="part-brown" x="-81.8" y="48.5" width="163.6" height="3.5"/>
-    <rect class="part-green" x="-63.25" y="-62.6" width="3.5" height="125.1"/>
-    <rect class="part-green" x="-35.25" y="-62.6" width="3.5" height="125.1"/>
-    <rect class="part-green" x="-10.75" y="-62.6" width="3.5" height="125.1"/>
-    <rect class="part-green" x="7.25" y="-62.6" width="3.5" height="125.1"/>
-    <rect class="part-green" x="32.25" y="-62.6" width="3.5" height="125.1"/>
-    <rect class="part-green" x="60.25" y="-62.6" width="3.5" height="125.1"/>
+    <rect class="part-green" x="-63.25" y="-63" width="3.5" height="126"/>
+    <rect class="part-green" x="-35.25" y="-63" width="3.5" height="126"/>
+    <rect class="part-green" x="-10.75" y="-63" width="3.5" height="126"/>
+    <rect class="part-green" x="7.25" y="-63" width="3.5" height="126"/>
+    <rect class="part-green" x="32.25" y="-63" width="3.5" height="126"/>
+    <rect class="part-green" x="60.25" y="-63" width="3.5" height="126"/>
     <line class="part-blue" x1="-81" y1="-29" x2="81" y2="-29" stroke-width="5"/>
     <line class="part-blue" x1="-81" y1="-9" x2="81" y2="-9" stroke-width="5"/>
     <line class="part-blue" x1="-81" y1="9" x2="81" y2="9" stroke-width="5"/>
@@ -86,12 +86,12 @@
     <line x1="-70" y1="0" x2="70" y2="0" stroke="#f0a040" stroke-width="0.8" stroke-dasharray="3 2"/>
     <line class="dim" x1="-81" y1="-58" x2="81" y2="-58"/>
     <text class="lbl" x="0" y="-62" text-anchor="middle">23-3/8</text>
-    <text class="lbl" x="0" y="62" text-anchor="middle">green 17-7/8 long (+Y)</text>
+    <text class="lbl" x="0" y="62" text-anchor="middle">green 18 long (+Y)</text>
   </g>
 
   <g transform="translate(50, 400)">
     <rect class="part-brown" x="0" y="0" width="14" height="8"/><text class="lbl" x="20" y="8">Brown end - 23-3/8 x 3-1/2 (x2)</text>
-    <rect class="part-green" x="0" y="14" width="4" height="14"/><text class="lbl" x="20" y="24">Green divider - 17-7/8 x 3-1/2 (x6)</text>
+    <rect class="part-green" x="0" y="14" width="4" height="14"/><text class="lbl" x="20" y="24">Green divider - 18 x 3-1/2 (x6)</text>
     <rect class="part-blue" x="0" y="32" width="14" height="4"/><text class="lbl" x="20" y="40">Blue mid row - 23-3/8 x 3-1/2 (x4)</text>
     <circle class="part-dowel-m" cx="7" cy="52" r="5"/><text class="lbl" x="20" y="56">Dowel middle 2 in. @ +/-6 X (x2)</text>
     <circle class="part-dowel-i" cx="7" cy="68" r="4"/><text class="lbl" x="20" y="72">Dowel inner 1.5 in. @ +/-2 X (x2)</text>
@@ -193,13 +193,13 @@
       <rect class="part-brown" x="0" y="0" width="80" height="12"/>
       <text class="lbl" x="90" y="10">A - End wall 23-3/8 x 3-1/2 - top lap @ 6 columns - x2</text>
       <rect class="part-green" x="0" y="22" width="12" height="60"/>
-      <text class="lbl" x="90" y="55">B - Divider 17-7/8 x 3-1/2 - bottom lap @ brown; upper @ blue - x6</text>
+      <text class="lbl" x="90" y="55">B - Divider 18 x 3-1/2 - bottom lap @ brown; upper @ blue - x6</text>
       <rect class="part-blue" x="0" y="90" width="80" height="12"/>
       <text class="lbl" x="90" y="100">C - Mid row 23-3/8 x 3-1/2 - bottom lap @ columns - x4</text>
       <rect class="part-dowel-m" x="4" y="112" width="72" height="8" rx="4"/>
-      <text class="lbl" x="90" y="120">D - Dowel middle 2 in. OD x 17-7/8 - x2</text>
+      <text class="lbl" x="90" y="120">D - Dowel middle 2 in. OD x 18 - x2</text>
       <rect class="part-dowel-i" x="8" y="132" width="64" height="6" rx="3"/>
-      <text class="lbl" x="90" y="140">E - Dowel inner 1.5 in. OD x 17-7/8 - x2</text>
+      <text class="lbl" x="90" y="140">E - Dowel inner 1.5 in. OD x 18 - x2</text>
     </g>
     <text class="txt sub" x="0" y="165">Half-lap depth: 1-3/4 in. (half of 3-1/2 wall). Dowel seat: 1 in. above blue top.</text>
     <text class="txt sub" x="0" y="180">x2 racks: 24 wall boards + 8 dowels + 50 tubes - see BOM.md</text>

@@ -1,4 +1,4 @@
-// Single green column divider blank (17-7/8 x 3-1/2 x 1/2 in.).
+// Single green column divider blank (18 x 3-1/2 x 1/2 in.).
 $fn = 48;
 preview = false;
 include <../config.scad>

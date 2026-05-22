@@ -1,4 +1,4 @@
-// Single inner dowel (1.5 in. OD x 17-7/8 in.).
+// Single inner dowel (1.5 in. OD x 18 in.).
 $fn = 48;
 preview = false;
 include <../config.scad>

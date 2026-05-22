@@ -17,14 +17,14 @@
       "width_in": 2,
       "length_in": 72,
       "qty": 1,
-      "notes": "≥6 ft; four cuts × 17-7/8 in. (middle dowels, both racks)"
+      "notes": "≥6 ft; four cuts × 18 in. (middle dowels, both racks)"
     },
     {
       "name": "1-1/2 in. dowel rod",
       "width_in": 1.5,
       "length_in": 72,
       "qty": 1,
-      "notes": "≥6 ft; four cuts × 17-7/8 in. (inner dowels, both racks)"
+      "notes": "≥6 ft; four cuts × 18 in. (inner dowels, both racks)"
     }
   ],
   "parts": [
@@ -46,7 +46,7 @@
       "layer": "green",
       "qty": 6,
       "qty_total_two_racks": 12,
-      "cut_w_in": 17.875,
+      "cut_w_in": 18,
       "cut_h_in": 3.5,
       "thickness_in": 0.5,
       "notes": "column-board-bottom.scad — bottom lap at brown; upper lap at blue mid rows.",
@@ -72,7 +72,7 @@
       "qty": 2,
       "qty_total_two_racks": 4,
       "od_in": 2,
-      "length_in": 17.875,
+      "length_in": 18,
       "notes": "row-dowel-top-middle.scad · row_dowel_od_middle_in",
       "color": "#D9BF59"
     },
@@ -84,7 +84,7 @@
       "qty": 2,
       "qty_total_two_racks": 4,
       "od_in": 1.5,
-      "length_in": 17.875,
+      "length_in": 18,
       "notes": "row-dowel-top-inner.scad · row_dowel_od_inner_in",
       "color": "#BF9E4D"
     },
@@ -121,7 +121,7 @@
       "Print or open this BOM and preview rack.scad in OpenSCAD.",
       "From one 4×8 sheet, cut 4 brown, 12 green, and 8 blue blanks (sizes in parts table).",
       "Notch all green columns, then brown ends, then blue mid rows (see README half-lap table).",
-      "Cut dowels: 4× 2 in. OD and 4× 1.5 in. OD, each 17-7/8 in. long.",
+      "Cut dowels: 4× 2 in. OD and 4× 1.5 in. OD, each 18 in. long.",
       "Assemble rack A: columns → blue mid rows → brown ends → fasten → insert dowels → 25 tubes.",
       "Repeat for rack B. Label A/B if fuse wiring differs.",
       "Transport racks separately; place side by side on field; wire shells 47–96."
@@ -132,7 +132,7 @@
     "dowel_stock": "One 6 ft (or longer) stick each of 2 in. and 1-1/2 in. dowel",
     "tips": [
       "Each rack is 5×5 (25 tubes); build two racks for the 50-tube Commander finale.",
-      "Green boards are 17-7/8 in. long (depth); brown and blue span 23-3/8 in. (width).",
+      "Green boards are 18 in. long (depth); brown and blue span 23-3/8 in. (width).",
       "Middle dowels (2 in.) at ±6 in. X; inner dowels (1.5 in.) at ±2 in. X.",
       "Label racks A/B before loading tubes if shell-to-position mapping differs.",
       "OpenSCAD models one rack; double every cut qty for two racks.",
