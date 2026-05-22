@@ -384,30 +384,56 @@
       const linksEl = document.getElementById("zone-links");
       linksEl.innerHTML = `
         <a href="${googleMapsOutlineUrl(verts, center)}" target="_blank" rel="noopener">Open in Google Maps</a>
-        <a href="https://www.openstreetmap.org/#map=19/${center.lat}/${center.lng}" target="_blank" rel="noopener">Open in OpenStreetMap</a>
+        <a href="https://www.google.com/maps/@${center.lat},${center.lng},19z/data=!3m1!1e3" target="_blank" rel="noopener">Google Maps (satellite)</a>
+        <a href="https://www.openstreetmap.org/#map=19/${center.lat}/${center.lng}" target="_blank" rel="noopener">OpenStreetMap</a>
       `;
 
       const map = L.map("map", { scrollWheelZoom: true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+
+      const esriAttribution =
+        'Tiles &copy; <a href="https://www.esri.com/">Esri</a> — Maxar, Earthstar, USDA, USGS, AeroGRID, IGN, GIS Community';
+
+      const satellite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: esriAttribution, maxZoom: 20 }
+      );
+
+      const satelliteLabels = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        { attribution: esriAttribution, maxZoom: 20, pane: "overlayPane" }
+      );
+
+      const street = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 20,
-      }).addTo(map);
+      });
+
+      satellite.addTo(map);
+      satelliteLabels.addTo(map);
+
+      L.control
+        .layers(
+          { Satellite: satellite, "Street map": street },
+          { "Place labels": satelliteLabels },
+          { collapsed: false }
+        )
+        .addTo(map);
 
       const latLngs = verts.map((v) => [v.lat, v.lng]);
       const polygon = L.polygon(latLngs, {
-        color: "#2563eb",
-        weight: 2,
+        color: "#fbbf24",
+        weight: 3,
         fillColor: "#3b82f6",
-        fillOpacity: 0.35,
+        fillOpacity: 0.45,
       }).addTo(map);
 
       polygon.bindPopup(`<strong>${zone.name}</strong><br>Deployment zone`);
 
       verts.forEach((v, i) => {
         L.circleMarker([v.lat, v.lng], {
-          radius: 5,
-          color: "#93c5fd",
-          fillColor: "#1d4ed8",
+          radius: 6,
+          color: "#ffffff",
+          fillColor: "#fbbf24",
           fillOpacity: 1,
           weight: 2,
         })
