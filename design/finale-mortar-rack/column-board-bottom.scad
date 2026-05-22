@@ -4,6 +4,8 @@ include <layout.scad>
 
 module column_board_bottom(x_center) {
   lap = board_half_lap_z_in();
+  mid_notch_z0 = column_middle_row_notch_z0();
+  mid_notch_h = column_middle_row_notch_h_in();
   eps = 0.02;
   oy_front = end_wall_inner_front_y() - wall_thickness_in;
   oy_back = end_wall_inner_back_y();
@@ -30,6 +32,18 @@ module column_board_bottom(x_center) {
               lap + eps
             ]);
         }
+        if (middle_row_half_lap)
+          for (m = [0 : num_middle_row_dividers() - 1])
+            translate([
+              0,
+              middle_row_divider_center_y(m) - y0b - wall_thickness_in / 2 - eps,
+              mid_notch_z0
+            ])
+              cube([
+                wall_thickness_in + 2 * eps,
+                wall_thickness_in + 2 * eps,
+                mid_notch_h + eps
+              ]);
       }
 }
 

@@ -24,8 +24,8 @@ Edit JSON under `data/` via pull requests:
 | `data/sequence.json` | Legacy (optional); CSV drives the sequence table and map markers |
 | `data/lines.json` | Map lines (`points`: `{lat,lng}` arrays) |
 | `data/finale-rack.json` | Finale fan rack spec (5 rows, tube angles, layout) |
-| `data/finale-rack-bom.json` | Plywood cut list and 4×8 sheet layout |
-| `design/finale-mortar-rack/` | OpenSCAD model, `BOM.md`, construction/assembly blueprints (`README.md`) |
+| `data/finale-rack-bom.json` | Cut list for 2 racks (plywood, dowels, tubes) — feeds web BOM table |
+| `design/finale-mortar-rack/` | OpenSCAD model, `BOM.md`, two-rack build guide (`README.md`) |
 
 Open `index.html` locally with any static server (browsers block `fetch` on `file://`):
 
@@ -45,4 +45,4 @@ npx --yes serve .
 
 **Maps:** Field map shows 5-minute summary dots on the fuse path; **Placement** section has a horseshoe schematic with every cue (click for details).
 
-**Finale rack:** **5×5 tubes per rack** (25), build **2 racks** for 50 Commander shells (47–96). Compact **2×4** base + 1/2 in. ply walls/lattice. See `design/finale-mortar-rack/BOM.md`.
+**Finale rack:** **5×5 tubes per rack** (25), build **2 racks** for 50 Commander shells (47–96). 1/2 in. ply frame + top dowels (2 in. / 1.5 in. OD). See `design/finale-mortar-rack/README.md` (build guide) and `BOM.md`.

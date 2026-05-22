@@ -1610,6 +1610,9 @@
     }
 
     function partCutLabel(p) {
+      if (p.od_in != null && p.length_in != null) {
+        return `${formatInches(p.od_in)}" OD × ${formatInches(p.length_in)}" long`;
+      }
       if (p.cut_l_in != null) {
         return `${formatInches(p.cut_l_in)}" long × ${p.profile_in || "1/2 × 1/2"} in.`;
       }
@@ -1759,7 +1762,8 @@
             <tr><th scope="row">Shell</th><td>Class C <code>${spec.shell?.nominal_in || 2}"</code> mortars</td></tr>
             <tr><th scope="row">Spacing</th><td><code>${layout.row_spacing_in}"</code> between rows (+X) · <code>${layout.row_depth_in}"</code> along row (+Y)</td></tr>
             <tr><th scope="row">Rotation</th><td>About <strong>Y</strong> (tilt in XZ, left–right fan)</td></tr>
-            <tr><th scope="row">Walls</th><td>1/2 in. plywood · <code>${spec.structure?.wall_height_in || 5.5}"</code> tall · 2 brown ends + 6 green dividers per rack</td></tr>
+            <tr><th scope="row">Walls</th><td>1/2 in. plywood · <code>${spec.structure?.wall_height_in || 3.5}"</code> tall · 2 brown + 6 green + 4 blue per rack</td></tr>
+            <tr><th scope="row">Dowels</th><td><code>${spec.structure?.dowel_middle_od_in ?? 2}"</code> OD (middle) · <code>${spec.structure?.dowel_inner_od_in ?? 1.5}"</code> OD (inner) × <code>${formatInches(spec.structure?.dowel_length_in ?? 17.875)}"</code> long · 4 per rack</td></tr>
             <tr><th scope="row">Cell opening</th><td><code>${layout.cell_opening_in || (layout.row_spacing_in - 0.5)}"</code> clear (tube + divider + gap)</td></tr>
             <tr><th scope="row">Footprint</th><td><code>${spec.structure?.footprint_w_in ?? "—"}</code> × <code>${spec.structure?.footprint_d_in ?? "—"}</code> in. inner · <code>${spec.structure?.outer_w_in ?? "—"}</code> × <code>${spec.structure?.outer_d_in ?? "—"}</code> in. with walls</td></tr>
             <tr><th scope="row">Spread</th><td><code>${spec.angles.total_spread_deg}°</code> total</td></tr>

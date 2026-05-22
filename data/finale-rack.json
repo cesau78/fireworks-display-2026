@@ -40,10 +40,13 @@
     "notes": "Outer row ±12° from vertical. Inner rows ±6°. Same angles on both racks."
   },
   "structure": {
-    "walls": "1/2 in. plywood — 2 brown ends + 6 green dividers per rack; half-lap at front/back",
+    "walls": "1/2 in. plywood — 2 brown ends + 6 green dividers + 4 blue mid rows per rack; 4 top dowels (2× 2 in. + 2× 1.5 in. OD)",
     "board_thickness_in": 0.5,
     "wall_thickness_in": 0.5,
     "wall_height_in": 3.5,
+    "dowel_middle_od_in": 2,
+    "dowel_inner_od_in": 1.5,
+    "dowel_length_in": 17.875,
     "grid_w_in": 14.875,
     "grid_d_in": 14.875,
     "tilt_pad_x_in": 2.74,
