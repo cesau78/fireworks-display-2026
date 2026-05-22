@@ -378,6 +378,27 @@
       transform-origin: 50% 80%;
     }
 
+    .fuse-placement-marker {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .fuse-placement-marker span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(124, 58, 237, 0.92);
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+      pointer-events: auto;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -523,8 +544,8 @@
         <div id="sequence-table-wrap"></div>
       </div>
       <p class="schema-hint">
-        <strong>Source:</strong> <code>data/sequence.json</code> —
-        each cue: <code>{ "sort": 1, "time_sec": 0, "position_id": "A1", "effect": "3\" gold willow", "notes": "" }</code>
+        <strong>Source:</strong> <code>data/firing-sequence.csv</code> —
+        fuse placement at <code>(start − show start) ÷ 15</code> seconds per foot along the 300 ft path.
       </p>
     </section>
   </main>
@@ -544,11 +565,14 @@
     const LINES_STORAGE_KEY = "fireworks-display-2026-lines";
     const DEFAULT_LINE_COLOR = "#f97316";
     const DEFAULT_LINE_WEIGHT = 3;
+    const FUSE_BURN_SEC_PER_FT = 15;
 
     let fieldMap = null;
     let mapLinesLayer = null;
+    let firingMarkersLayer = null;
     let repoLines = [];
     let localLines = [];
+    let firingSequenceRows = [];
     let drawDraft = { points: [], polyline: null, markers: [] };
     let drawModeActive = false;
 
@@ -613,6 +637,114 @@
       } catch {
         return fallback;
       }
+    }
+
+    async function loadText(name) {
+      const res = await fetch(`${DATA_BASE}/${name}`);
+      if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
+      return res.text();
+    }
+
+    function parseCsvLine(line) {
+      const result = [];
+      let cur = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+          inQuotes = !inQuotes;
+          continue;
+        }
+        if (c === "," && !inQuotes) {
+          result.push(cur.trim());
+          cur = "";
+          continue;
+        }
+        cur += c;
+      }
+      result.push(cur.trim());
+      return result;
+    }
+
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/).filter((l) => l.trim());
+      if (lines.length < 2) return [];
+      const headers = parseCsvLine(lines[0]);
+      return lines.slice(1).map((line) => {
+        const cols = parseCsvLine(line);
+        const row = {};
+        headers.forEach((h, i) => {
+          row[h] = cols[i] ?? "";
+        });
+        return row;
+      });
+    }
+
+    function parseShowTime(timeStr) {
+      const parts = String(timeStr).trim().split(":");
+      const h = Number(parts[0]) || 0;
+      const m = Number(parts[1]) || 0;
+      return h * 3600 + m * 60;
+    }
+
+    function getFuseLatLngs() {
+      const fuse = repoLines.find((l) => l.type === "fuse");
+      return fuse ? lineToLatLngs(fuse) : [];
+    }
+
+    function fuseDistanceFt(row, t0Sec, bucketOffsets) {
+      const key = row.Start;
+      const n = bucketOffsets[key] || 0;
+      bucketOffsets[key] = n + 1;
+      const base = (parseShowTime(row.Start) - t0Sec) / FUSE_BURN_SEC_PER_FT;
+      return Math.min(base + n * 0.35, 299.5);
+    }
+
+    function computeFusePlacements(rows) {
+      const t0Sec = Math.min(...rows.map((r) => parseShowTime(r.Start)));
+      const bucketOffsets = {};
+      return rows.map((row) => ({
+        row,
+        distFt: fuseDistanceFt(row, t0Sec, bucketOffsets),
+      }));
+    }
+
+    function renderFuseSequenceMarkers() {
+      if (!fieldMap || !firingMarkersLayer) return;
+      firingMarkersLayer.clearLayers();
+      const latLngs = getFuseLatLngs();
+      if (latLngs.length < 2 || firingSequenceRows.length === 0) return;
+
+      ensureLinesPane(fieldMap);
+      computeFusePlacements(firingSequenceRows).forEach(({ row, distFt }) => {
+        const pt = pointAlongPath(latLngs, distFt);
+        if (!pt) return;
+
+        const piece = row.Piece || row.Item || "—";
+        const label = String(row.Sequence);
+        const icon = L.divIcon({
+          className: "fuse-placement-marker",
+          html: `<span>${escapeHtml(label)}</span>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        });
+        const marker = L.marker([pt.lat, pt.lng], {
+          icon,
+          pane: "linesPane",
+          zIndexOffset: 1000,
+        });
+        marker.bindPopup(
+          `<strong>#${escapeHtml(label)} · ${Math.round(distFt)} ft</strong><br>` +
+            `<em>${escapeHtml(row.Phase || "")}</em> · ${escapeHtml(row.Start || "")}<br>` +
+            `<strong>Piece:</strong> ${escapeHtml(piece)}<br>` +
+            (row.Item ? `<strong>Item:</strong> ${escapeHtml(row.Item)}<br>` : "") +
+            (row.Description
+              ? `<span style="font-size:0.85em">${escapeHtml(row.Description.slice(0, 120))}${row.Description.length > 120 ? "…" : ""}</span>`
+              : "")
+        );
+        firingMarkersLayer.addLayer(marker);
+      });
+      firingMarkersLayer.bringToFront();
     }
 
     function loadLocalLines() {
@@ -811,6 +943,7 @@
         }
       });
       mapLinesLayer.bringToFront();
+      renderFuseSequenceMarkers();
     }
 
     function updateLinesPanel() {
@@ -1062,9 +1195,13 @@
         .join("");
       const hasFuse = allLines().some((l) => l.type === "fuse");
       const fuseLegend = hasFuse
-        ? `<span><i style="border-color:#dc2626;background:linear-gradient(90deg,#dc2626 60%,transparent)"></i>Firing sequence</span>`
+        ? `<span><i style="border-color:#dc2626;background:linear-gradient(90deg,#dc2626 60%,transparent)"></i>Fuse path</span>`
         : "";
-      document.getElementById("zone-legend").innerHTML = zoneLegend + fuseLegend;
+      const placementLegend =
+        firingSequenceRows.length > 0
+          ? `<span><i style="border-color:#fff;background:#7c3aed;border-radius:50%"></i>Show cues (${firingSequenceRows.length})</span>`
+          : "";
+      document.getElementById("zone-legend").innerHTML = zoneLegend + fuseLegend + placementLegend;
 
       document.getElementById("zone-coords").innerHTML = zones.map(renderZoneDetail).join("");
 
@@ -1148,6 +1285,7 @@
 
       fieldMap = map;
       mapLinesLayer = L.featureGroup().addTo(fieldMap);
+      firingMarkersLayer = L.featureGroup().addTo(fieldMap);
       renderLinesOnMap();
       setupLineDrawing();
       updateLinesPanel();
@@ -1197,34 +1335,36 @@
         </table>`;
     }
 
-    function renderSequence(sequence) {
-      document.getElementById("sequence-description").textContent =
-        sequence.description || "Firing order and timing.";
-
+    function renderSequence() {
       const wrap = document.getElementById("sequence-table-wrap");
-      const cues = (sequence.cues || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 
-      if (cues.length === 0) {
+      if (firingSequenceRows.length === 0) {
+        document.getElementById("sequence-description").textContent =
+          "Firing order from CSV (fuse burns 15 seconds per foot).";
         wrap.innerHTML = `
           <div class="empty-state">
-            No cues yet. Add entries to <code>data/sequence.json</code>.
-            <code>{
-  "cues": [
-    { "sort": 1, "time_sec": 0, "position_id": "A1", "effect": "Opening salute", "notes": "" }
-  ]
-}</code>
+            Add <code>data/firing-sequence.csv</code> to show the show sequence and fuse placements.
           </div>`;
         return;
       }
 
-      const rows = cues
+      const firstStart = firingSequenceRows.reduce(
+        (min, r) => (parseShowTime(r.Start) < parseShowTime(min) ? r.Start : min),
+        firingSequenceRows[0].Start
+      );
+
+      document.getElementById("sequence-description").textContent =
+        `${firingSequenceRows.length} cues from firing-sequence.csv · fuse burn ${FUSE_BURN_SEC_PER_FT} sec/ft · show start ${firstStart}`;
+
+      const rows = computeFusePlacements(firingSequenceRows)
         .map(
-          (c) => `<tr>
-            <td>${c.sort ?? "—"}</td>
-            <td>${c.time_sec != null ? c.time_sec + "s" : "—"}</td>
-            <td><code>${escapeHtml(c.position_id || "—")}</code></td>
-            <td>${escapeHtml(c.effect || "—")}</td>
-            <td>${escapeHtml(c.notes || "")}</td>
+          ({ row, distFt }) => `<tr>
+            <td>${escapeHtml(String(row.Sequence))}</td>
+            <td>${escapeHtml(row.Start || "—")}</td>
+            <td>${escapeHtml(row.Phase || "—")}</td>
+            <td><code>${Math.round(distFt)} ft</code></td>
+            <td><code>${escapeHtml(row.Piece || "—")}</code></td>
+            <td>${escapeHtml((row.Item || row.Description || "").slice(0, 48))}${(row.Item || row.Description || "").length > 48 ? "…" : ""}</td>
           </tr>`
         )
         .join("");
@@ -1232,7 +1372,7 @@
       wrap.innerHTML = `
         <table>
           <thead>
-            <tr><th>Order</th><th>Time</th><th>Position</th><th>Effect</th><th>Notes</th></tr>
+            <tr><th>#</th><th>Start</th><th>Phase</th><th>Fuse ft</th><th>Piece</th><th>Item / description</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>`;
@@ -1255,11 +1395,11 @@
 
     async function init() {
       try {
-        const [zone, placement, sequence, linesData] = await Promise.all([
+        const [zone, placement, linesData, csvText] = await Promise.all([
           loadJson("zone.json"),
           loadJson("placement.json"),
-          loadJson("sequence.json"),
           loadJson("lines.json"),
+          loadText("firing-sequence.csv"),
         ]);
 
         repoLines = linesData.lines || [];
@@ -1267,9 +1407,10 @@
           console.warn("lines.json: no fuse / firing sequence path found");
         }
         localLines = loadLocalLines().map((line) => ({ ...line, _local: true }));
+        firingSequenceRows = parseCsv(csvText);
         renderZones(zone);
         renderPlacement(placement, zone);
-        renderSequence(sequence);
+        renderSequence();
 
         document.getElementById("updated").textContent =
           "Loaded " + new Date().toLocaleString();
