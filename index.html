@@ -122,6 +122,90 @@
     #zone-definitions h2 .badge { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
     #placement h2 .badge { background: rgba(34, 197, 94, 0.2); color: #86efac; }
     #sequence h2 .badge { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+    #finale-rack h2 .badge { background: rgba(249, 115, 22, 0.2); color: #fdba74; }
+
+    .rack-design {
+      padding: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .rack-diagrams {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 720px) {
+      .rack-diagrams { grid-template-columns: 1fr; }
+    }
+
+    .rack-diagram {
+      background: #0f1219;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+
+    .rack-diagram h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .rack-diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .rack-spec-table {
+      font-size: 0.85rem;
+    }
+
+    .rack-spec-table td code {
+      font-size: 0.8rem;
+    }
+
+    .rack-bom {
+      border-top: 1px solid var(--border);
+      padding: 0.75rem 1rem 1rem;
+    }
+
+    .rack-bom h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .rack-bom .bom-stock {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+
+    .rack-color-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin: 0 0 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .rack-color-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .rack-color-legend i {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
 
     .section-lead {
       color: var(--muted);
@@ -528,6 +612,7 @@
   <nav class="toc" aria-label="Sections">
     <a href="#zone-definitions">Zone Definitions</a>
     <a href="#placement">Placement</a>
+    <a href="#finale-rack">Finale Rack</a>
     <a href="#sequence">Sequence</a>
   </nav>
 
@@ -567,6 +652,19 @@
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/firing-sequence.csv</code> on the horseshoe diagram (all cues).
         Optional racks in <code>data/placement.json</code>.
+      </p>
+    </section>
+
+    <section id="finale-rack">
+      <h2><span class="badge">Rack</span> Finale Rack</h2>
+      <p class="section-lead" id="finale-rack-description">Loading…</p>
+      <div class="card">
+        <div id="finale-rack-wrap" class="rack-design"></div>
+      </div>
+      <p class="schema-hint">
+        <strong>Source:</strong> <code>data/finale-rack.json</code> · BOM:
+        <code>data/finale-rack-bom.json</code> · OpenSCAD:
+        <code>design/finale-mortar-rack/rack.scad</code>
       </p>
     </section>
 
@@ -1493,6 +1591,183 @@
       updateLinesPanel();
     }
 
+    function formatInches(n) {
+      const eighths = Math.round(Number(n) * 8);
+      const whole = Math.floor(eighths / 8);
+      const rem = eighths % 8;
+      const frac = {
+        1: "1/8",
+        2: "1/4",
+        3: "3/8",
+        4: "1/2",
+        5: "5/8",
+        6: "3/4",
+        7: "7/8",
+      };
+      if (rem === 0) return String(whole);
+      const f = frac[rem];
+      return whole ? `${whole}-${f}` : f;
+    }
+
+    function partCutLabel(p) {
+      if (p.cut_l_in != null) {
+        return `${formatInches(p.cut_l_in)}" long × ${p.profile_in || "1/2 × 1/2"} in.`;
+      }
+      const w = p.cut_w_in != null ? formatInches(p.cut_w_in) : "—";
+      const d = p.cut_d_in != null ? formatInches(p.cut_d_in) : p.cut_h_in != null ? formatInches(p.cut_h_in) : "—";
+      return `${w}" × ${d}"`;
+    }
+
+    function renderFinaleRackBom(bom, spec) {
+      if (!bom || !bom.parts) return "";
+      const rackN = bom.rack_qty || spec?.rack_count || 2;
+      const stock = (bom.standard_stock || [])
+        .filter((s) => s.qty > 0)
+        .map((s) => `<strong>${s.qty}×</strong> ${escapeHtml(s.name)}`)
+        .join(" · ");
+      const colorLegend = bom.parts
+        .filter((p) => p.color)
+        .map(
+          (p) =>
+            `<span><i style="background:${p.color}"></i>${escapeHtml(p.name)}</span>`
+        )
+        .join("");
+      const partRows = bom.parts
+        .map(
+          (p) => `<tr>
+            <td>${p.color ? `<i style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${p.color};vertical-align:middle;margin-right:0.35rem;border:1px solid rgba(255,255,255,0.2)"></i>` : ""}${p.qty}${p.qty_total_two_racks ? ` <span style="color:var(--muted)">(${p.qty_total_two_racks} both)</span>` : ""}</td>
+            <td>${escapeHtml(p.name)}${p.stock ? ` <span style="color:var(--muted)">(${escapeHtml(p.stock)})</span>` : ""}</td>
+            <td><code>${partCutLabel(p)}</code></td>
+            <td>${escapeHtml(p.layer ? `Layer ${p.layer}` : p.notes?.slice(0, 48) || "—")}</td>
+          </tr>`
+        )
+        .join("");
+      const tips = (bom.cut_layout?.tips || [])
+        .map((t) => `<li>${escapeHtml(t)}</li>`)
+        .join("");
+      const sum = bom.summary || {};
+      return `
+        <div class="rack-bom">
+          <h4>Bill of materials</h4>
+          <p class="bom-stock">${escapeHtml(bom.per_unit || "Per rack")} · Build <strong>${rackN}</strong> racks · ${stock || "See cut list"} · ${escapeHtml(bom.material || "")}</p>
+          ${colorLegend ? `<div class="rack-color-legend" aria-label="Board colors in OpenSCAD model">${colorLegend}</div>` : ""}
+          <table class="rack-spec-table">
+            <thead>
+              <tr><th>Qty</th><th>Part</th><th>Cut size</th><th>Notes</th></tr>
+            </thead>
+            <tbody>${partRows}</tbody>
+          </table>
+          ${tips ? `<ul style="margin:0.5rem 0 0;padding-left:1.2rem;font-size:0.8rem;color:var(--muted)">${tips}</ul>` : ""}
+        </div>`;
+    }
+
+    function renderFinaleRack(spec, bom) {
+      const wrap = document.getElementById("finale-rack-wrap");
+      const desc = document.getElementById("finale-rack-description");
+      if (!spec || !spec.angles) {
+        desc.textContent = "Finale mortar rack design.";
+        wrap.innerHTML = `<div class="empty-state">Add <code>data/finale-rack.json</code>.</div>`;
+        return;
+      }
+
+      const outer = spec.angles.outer_from_vertical_deg;
+      const rows = spec.angles.rows || [];
+      const layout = spec.layout || {};
+      const tube = spec.tube || {};
+
+      const perRack = layout.tubes_per_rack || layout.rows * layout.tubes_per_row || 25;
+      const rackN = spec.rack_count || 2;
+      desc.textContent =
+        spec.description ||
+        `${perRack} tubes/rack (${layout.rows || 5}×${layout.tubes_per_row || 5}) · build ${rackN} racks (${layout.total_tubes || perRack * rackN} total) · fan ±${outer}°`;
+
+      const rowRows = rows
+        .map(
+          (r) => `<tr>
+            <td>${escapeHtml(String(r.index))}</td>
+            <td>${escapeHtml(r.label)}</td>
+            <td><code>${r.from_vertical_deg > 0 ? "+" : ""}${r.from_vertical_deg}°</code></td>
+            <td>${escapeHtml(r.tilt)}</td>
+          </tr>`
+        )
+        .join("");
+
+      const svgW = 280;
+      const svgH = 200;
+      const cx = svgW / 2;
+      const baseY = svgH - 28;
+      const tubeLen = 72;
+
+      const endViewTubes = rows
+        .map((r, i) => {
+          const x = cx + (i - (rows.length - 1) / 2) * 36;
+          const a = (r.from_vertical_deg * Math.PI) / 180;
+          const dx = Math.sin(a) * tubeLen;
+          const dy = -Math.cos(a) * tubeLen;
+          const stroke = r.from_vertical_deg === 0 ? "#86efac" : "#60a5fa";
+          return `<line x1="${x}" y1="${baseY}" x2="${(x + dx).toFixed(1)}" y2="${(baseY + dy).toFixed(1)}" stroke="${stroke}" stroke-width="6" stroke-linecap="round"/>`;
+        })
+        .join("");
+
+      const topRows = layout.rows || 5;
+      const topCols = layout.tubes_per_row || 5;
+      const gridW = 240;
+      const gridH = 100;
+      const cellW = gridW / (topCols + 1);
+      const cellH = gridH / (topRows + 1);
+      const topDots = [];
+      for (let r = 0; r < topRows; r++) {
+        for (let c = 0; c < topCols; c++) {
+          const px = cellW * (r + 1);
+          const py = cellH * (c + 1);
+          const rowSpec = rows[r];
+          const fill = rowSpec && rowSpec.from_vertical_deg === 0 ? "#86efac" : "#60a5fa";
+          topDots.push(
+            `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="${fill}" stroke="#fff" stroke-width="1"/>`
+          );
+        }
+      }
+
+      wrap.innerHTML = `
+        <div class="rack-diagrams">
+          <div class="rack-diagram">
+            <h4>Front view (crowd) — rotate about Y</h4>
+            <svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" aria-label="Rack front view, Y-axis rotation">
+              <line x1="20" y1="${baseY}" x2="${svgW - 20}" y2="${baseY}" stroke="#475569" stroke-width="2"/>
+              ${endViewTubes}
+              <text x="${cx}" y="16" fill="#93c5fd" font-size="11" text-anchor="middle">XZ fan · Y axis · ±${outer}°</text>
+            </svg>
+          </div>
+          <div class="rack-diagram">
+            <h4>Top view — ${topRows} rows × ${topCols} tubes (X × Y)</h4>
+            <svg viewBox="0 0 ${gridW} ${gridH}" xmlns="http://www.w3.org/2000/svg" aria-label="Rack top view">
+              ${topDots.join("")}
+              <text x="8" y="${gridH / 2}" fill="#64748b" font-size="9" transform="rotate(-90 8 ${gridH / 2})">+Y depth</text>
+              <text x="${gridW / 2}" y="${gridH - 4}" fill="#64748b" font-size="10" text-anchor="middle">+X rows (fan)</text>
+            </svg>
+          </div>
+        </div>
+        <table class="rack-spec-table">
+          <thead>
+            <tr><th>Row</th><th>Label</th><th>Angle</th><th>Tilt</th></tr>
+          </thead>
+          <tbody>${rowRows}</tbody>
+        </table>
+        <table class="rack-spec-table">
+          <tbody>
+            <tr><th scope="row">Tube</th><td><code>${tube.od_in}"</code> OD × <code>${tube.length_in}"</code> long</td></tr>
+            <tr><th scope="row">Shell</th><td>Class C <code>${spec.shell?.nominal_in || 2}"</code> mortars</td></tr>
+            <tr><th scope="row">Spacing</th><td><code>${layout.row_spacing_in}"</code> between rows (+X) · <code>${layout.row_depth_in}"</code> along row (+Y)</td></tr>
+            <tr><th scope="row">Rotation</th><td>About <strong>Y</strong> (tilt in XZ, left–right fan)</td></tr>
+            <tr><th scope="row">Walls</th><td>1/2 in. plywood · <code>${spec.structure?.wall_height_in || 5.5}"</code> tall · 2 brown ends + 6 green dividers per rack</td></tr>
+            <tr><th scope="row">Cell opening</th><td><code>${layout.cell_opening_in || (layout.row_spacing_in - 0.5)}"</code> clear (tube + divider + gap)</td></tr>
+            <tr><th scope="row">Footprint</th><td><code>${spec.structure?.footprint_w_in ?? "—"}</code> × <code>${spec.structure?.footprint_d_in ?? "—"}</code> in. inner · <code>${spec.structure?.outer_w_in ?? "—"}</code> × <code>${spec.structure?.outer_d_in ?? "—"}</code> in. with walls</td></tr>
+            <tr><th scope="row">Spread</th><td><code>${spec.angles.total_spread_deg}°</code> total</td></tr>
+          </tbody>
+        </table>
+        ${renderFinaleRackBom(bom, spec)}`;
+    }
+
     function renderPlacement(placement, zoneData) {
       document.getElementById("placement-description").textContent =
         `${firingSequenceRows.length} cues on fuse schematic — #1 top-left, along top, semicircle down, back left. Details on click.`;
@@ -1592,11 +1867,13 @@
 
     async function init() {
       try {
-        const [zone, placement, linesData, csvText] = await Promise.all([
+        const [zone, placement, linesData, csvText, finaleRack, finaleBom] = await Promise.all([
           loadJson("zone.json"),
           loadJson("placement.json"),
           loadJson("lines.json"),
           loadText("firing-sequence.csv"),
+          loadJson("finale-rack.json"),
+          loadJson("finale-rack-bom.json"),
         ]);
 
         repoLines = linesData.lines || [];
@@ -1607,6 +1884,7 @@
         firingSequenceRows = parseCsv(csvText);
         renderZones(zone);
         renderPlacement(placement, zone);
+        renderFinaleRack(finaleRack, finaleBom);
         renderSequence();
 
         document.getElementById("updated").textContent =

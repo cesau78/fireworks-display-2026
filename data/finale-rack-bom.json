@@ -1,0 +1,58 @@
+{
+  "id": "finale-mortar-rack-bom",
+  "title": "Finale Mortar Rack — Bill of Materials",
+  "per_unit": "One rack (5 rows × 5 tubes). Build qty 2 for the full finale.",
+  "rack_qty": 2,
+  "material": "1/2 in. plywood (brown ends + green dividers)",
+  "standard_stock": [
+    {
+      "name": "4×8 sheet (plywood)",
+      "width_in": 48,
+      "length_in": 96,
+      "qty": 1,
+      "notes": "Walls for both racks on one sheet"
+    }
+  ],
+  "parts": [
+    {
+      "id": "wall-end",
+      "name": "End wall (front & back)",
+      "stock": "plywood",
+      "qty": 2,
+      "qty_total_two_racks": 4,
+      "cut_w_in": 23.375,
+      "cut_h_in": 3.5,
+      "thickness_in": 0.5,
+      "notes": "23-3/8 × 3-1/2 in. (+1 in. each side in X). Top-half lap at green crossings.",
+      "color": "#E59E61"
+    },
+    {
+      "id": "column-board-x",
+      "name": "Green divider (+X)",
+      "stock": "plywood",
+      "qty": 6,
+      "qty_total_two_racks": 12,
+      "cut_w_in": 17.875,
+      "cut_h_in": 3.5,
+      "thickness_in": 0.5,
+      "notes": "6× 17-7/8 × 3-1/2 in. (same size; positions from divider_offset_from_center_in[0..5]). Bottom-half lap at brown ends.",
+      "color": "#94B86B"
+    }
+  ],
+  "summary": {
+    "tubes_per_rack": 25,
+    "racks_for_show": 2,
+    "tubes_total": 50,
+    "part_count_per_rack": 8,
+    "plywood_area_sqft_two_racks": 5.5,
+    "sheet_utilization_pct": 17
+  },
+  "cut_layout": {
+    "plywood_sheet": "One 4×8 — all walls for 2 racks",
+    "tips": [
+      "Each rack is 5×5 (25 tubes); build two racks for 50-tube finale.",
+      "Footprint per rack ~20-3/8 × 14-7/8 in. tube bay (green boards 17-7/8 in. long along depth).",
+      "Label racks A/B if row angles or fuse wiring differ."
+    ]
+  }
+}
