@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fireworks Display 2026 — Design Board</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root {
+      --bg: #0c0e14;
+      --surface: #151922;
+      --surface-2: #1c2230;
+      --border: #2a3344;
+      --text: #e8ecf4;
+      --muted: #8b95a8;
+      --accent: #f59e0b;
+      --accent-dim: #b45309;
+      --zone: #3b82f6;
+      --placement: #22c55e;
+      --sequence: #a855f7;
+      --danger: #ef4444;
+      --radius: 10px;
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "Cascadia Code", "Consolas", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #12151c 0%, var(--bg) 100%);
+    }
+
+    header h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.5rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 52rem;
+    }
+
+    .github-hint {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .github-hint a { color: var(--accent); }
+
+    nav.toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 500;
+    }
+
+    nav.toc a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      scroll-margin-top: 4rem;
+    }
+
+    section h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section h2 .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    #zone-definitions h2 .badge { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    #placement h2 .badge { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+    #sequence h2 .badge { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+
+    .section-lead {
+      color: var(--muted);
+      margin: 0 0 1rem;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    #map {
+      height: 380px;
+      width: 100%;
+      background: #1a1f2e;
+    }
+
+    .coords-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .coord-block label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .coord-block code,
+    .coord-block span {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+
+    .links-row {
+      padding: 0.75rem 1rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .links-row a {
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-2);
+    }
+
+    .links-row a:hover { border-color: var(--accent); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .empty-state {
+      padding: 1.5rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state code {
+      display: block;
+      margin-top: 0.75rem;
+      text-align: left;
+      background: var(--surface-2);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      color: var(--text);
+    }
+
+    .schema-hint {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .schema-hint strong { color: var(--text); }
+
+    .status {
+      padding: 1rem 1.5rem;
+      margin: 1rem 1.5rem 0;
+      border-radius: var(--radius);
+      background: #3f1d1d;
+      border: 1px solid var(--danger);
+      color: #fecaca;
+      display: none;
+    }
+
+    .status.visible { display: block; }
+
+    footer {
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fireworks Display 2026</h1>
+    <p>
+      Shared design board for the show team. Zone boundaries, mortar placement, and firing sequence
+      live in <code>data/*.json</code> — update via GitHub and redeploy Pages.
+    </p>
+    <p class="github-hint">
+      Edit on GitHub → open a PR → merge → site refreshes.
+      See <a href="README.md">README.md</a> for Pages setup.
+    </p>
+  </header>
+
+  <p id="load-error" class="status" role="alert"></p>
+
+  <nav class="toc" aria-label="Sections">
+    <a href="#zone-definitions">Zone definitions</a>
+    <a href="#placement">Placement</a>
+    <a href="#sequence">Sequence</a>
+  </nav>
+
+  <main>
+    <section id="zone-definitions">
+      <h2><span class="badge">Zone</span> Zone definitions</h2>
+      <p class="section-lead" id="zone-description">Loading…</p>
+      <div class="card">
+        <div id="map" role="img" aria-label="Map of deployment zone"></div>
+        <div class="coords-grid" id="zone-coords"></div>
+        <div class="links-row" id="zone-links"></div>
+      </div>
+      <p class="schema-hint">
+        <strong>Source:</strong> <code>data/zone.json</code> —
+        corners, bounds, and <code>vertices</code> (closed polygon). Optional <code>notes</code> for hazards or setbacks.
+      </p>
+    </section>
+
+    <section id="placement">
+      <h2><span class="badge">Placement</span> Placement</h2>
+      <p class="section-lead" id="placement-description">Loading…</p>
+      <div class="card">
+        <div id="placement-table-wrap"></div>
+      </div>
+      <p class="schema-hint">
+        <strong>Source:</strong> <code>data/placement.json</code> —
+        each position: <code>{ "id": "A1", "lat": 45.04865, "lng": -90.48770, "label": "Rack 1", "notes": "" }</code>
+      </p>
+    </section>
+
+    <section id="sequence">
+      <h2><span class="badge">Sequence</span> Sequence</h2>
+      <p class="section-lead" id="sequence-description">Loading…</p>
+      <div class="card">
+        <div id="sequence-table-wrap"></div>
+      </div>
+      <p class="schema-hint">
+        <strong>Source:</strong> <code>data/sequence.json</code> —
+        each cue: <code>{ "sort": 1, "time_sec": 0, "position_id": "A1", "effect": "3\" gold willow", "notes": "" }</code>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Fireworks Display 2026 · Data-driven board ·
+    <span id="updated"></span>
+  </footer>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const DATA_BASE = "data";
+
+    function showError(msg) {
+      const el = document.getElementById("load-error");
+      el.textContent = msg;
+      el.classList.add("visible");
+    }
+
+    async function loadJson(name) {
+      const res = await fetch(`${DATA_BASE}/${name}`);
+      if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function fmtCoord(lat, lng) {
+      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+
+    function googleMapsOutlineUrl(vertices, center) {
+      const path = vertices
+        .map((v) => `${v.lat},${v.lng}`)
+        .concat([`${vertices[0].lat},${vertices[0].lng}`])
+        .join("/");
+      return `https://www.google.com/maps/dir/${path}/@${center.lat},${center.lng},19z`;
+    }
+
+    function googleMapsPointUrl(lat, lng) {
+      return `https://www.google.com/maps?q=${lat},${lng}&z=19`;
+    }
+
+    function renderZone(zone) {
+      document.getElementById("zone-description").textContent =
+        zone.description || "Deployment boundary for shells.";
+
+      const bounds = zone.bounds;
+      const verts = zone.vertices;
+      const center = {
+        lat: (bounds.north + bounds.south) / 2,
+        lng: (bounds.east + bounds.west) / 2,
+      };
+
+      const coordsEl = document.getElementById("zone-coords");
+      coordsEl.innerHTML = `
+        <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
+        <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
+        <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
+        <div class="coord-block"><label>West</label><code>${bounds.west}</code></div>
+        <div class="coord-block"><label>NW corner</label><code>${fmtCoord(zone.corners[0].lat, zone.corners[0].lng)}</code></div>
+        <div class="coord-block"><label>SE corner</label><code>${fmtCoord(zone.corners[1].lat, zone.corners[1].lng)}</code></div>
+        <div class="coord-block"><label>Center</label><code>${fmtCoord(center.lat, center.lng)}</code></div>
+      `;
+
+      const linksEl = document.getElementById("zone-links");
+      linksEl.innerHTML = `
+        <a href="${googleMapsOutlineUrl(verts, center)}" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a href="https://www.openstreetmap.org/#map=19/${center.lat}/${center.lng}" target="_blank" rel="noopener">Open in OpenStreetMap</a>
+      `;
+
+      const map = L.map("map", { scrollWheelZoom: true });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 20,
+      }).addTo(map);
+
+      const latLngs = verts.map((v) => [v.lat, v.lng]);
+      const polygon = L.polygon(latLngs, {
+        color: "#2563eb",
+        weight: 2,
+        fillColor: "#3b82f6",
+        fillOpacity: 0.35,
+      }).addTo(map);
+
+      polygon.bindPopup(`<strong>${zone.name}</strong><br>Deployment zone`);
+
+      verts.forEach((v, i) => {
+        L.circleMarker([v.lat, v.lng], {
+          radius: 5,
+          color: "#93c5fd",
+          fillColor: "#1d4ed8",
+          fillOpacity: 1,
+          weight: 2,
+        })
+          .addTo(map)
+          .bindPopup(`Vertex ${i + 1}<br>${fmtCoord(v.lat, v.lng)}`);
+      });
+
+      map.fitBounds(polygon.getBounds(), { padding: [24, 24] });
+    }
+
+    function renderPlacement(placement, zone) {
+      document.getElementById("placement-description").textContent =
+        placement.description || "Mortar and rack positions within the zone.";
+
+      const wrap = document.getElementById("placement-table-wrap");
+      const positions = placement.positions || [];
+
+      if (positions.length === 0) {
+        wrap.innerHTML = `
+          <div class="empty-state">
+            No positions yet. Add entries to <code>data/placement.json</code>.
+            <code>{
+  "positions": [
+    { "id": "A1", "lat": 45.048654, "lng": -90.487696, "label": "Center rack", "notes": "" }
+  ]
+}</code>
+          </div>`;
+        return;
+      }
+
+      const rows = positions
+        .map((p) => {
+          const inZone = pointInZone(p.lat, p.lng, zone.bounds);
+          const mapLink = googleMapsPointUrl(p.lat, p.lng);
+          return `<tr>
+            <td><strong>${escapeHtml(p.id)}</strong></td>
+            <td>${escapeHtml(p.label || "—")}</td>
+            <td><code>${p.lat}, ${p.lng}</code></td>
+            <td>${inZone ? "✓" : '<span style="color:var(--danger)">Outside zone</span>'}</td>
+            <td><a href="${mapLink}" target="_blank" rel="noopener">Map</a></td>
+            <td>${escapeHtml(p.notes || "")}</td>
+          </tr>`;
+        })
+        .join("");
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Label</th><th>Coordinates</th><th>In zone</th><th></th><th>Notes</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    function renderSequence(sequence) {
+      document.getElementById("sequence-description").textContent =
+        sequence.description || "Firing order and timing.";
+
+      const wrap = document.getElementById("sequence-table-wrap");
+      const cues = (sequence.cues || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+
+      if (cues.length === 0) {
+        wrap.innerHTML = `
+          <div class="empty-state">
+            No cues yet. Add entries to <code>data/sequence.json</code>.
+            <code>{
+  "cues": [
+    { "sort": 1, "time_sec": 0, "position_id": "A1", "effect": "Opening salute", "notes": "" }
+  ]
+}</code>
+          </div>`;
+        return;
+      }
+
+      const rows = cues
+        .map(
+          (c) => `<tr>
+            <td>${c.sort ?? "—"}</td>
+            <td>${c.time_sec != null ? c.time_sec + "s" : "—"}</td>
+            <td><code>${escapeHtml(c.position_id || "—")}</code></td>
+            <td>${escapeHtml(c.effect || "—")}</td>
+            <td>${escapeHtml(c.notes || "")}</td>
+          </tr>`
+        )
+        .join("");
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Order</th><th>Time</th><th>Position</th><th>Effect</th><th>Notes</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    function pointInZone(lat, lng, bounds) {
+      return (
+        lat <= bounds.north &&
+        lat >= bounds.south &&
+        lng >= bounds.west &&
+        lng <= bounds.east
+      );
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    async function init() {
+      try {
+        const [zone, placement, sequence] = await Promise.all([
+          loadJson("zone.json"),
+          loadJson("placement.json"),
+          loadJson("sequence.json"),
+        ]);
+
+        renderZone(zone);
+        renderPlacement(placement, zone);
+        renderSequence(sequence);
+
+        document.getElementById("updated").textContent =
+          "Loaded " + new Date().toLocaleString();
+      } catch (err) {
+        showError(
+          "Could not load design data. Serve this folder over HTTP (e.g. npx serve .) or deploy to GitHub Pages. " +
+            err.message
+        );
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

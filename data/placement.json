@@ -1,0 +1,4 @@
+{
+  "description": "Mortar / rack positions inside the deployment zone. Add one entry per physical location.",
+  "positions": []
+}
