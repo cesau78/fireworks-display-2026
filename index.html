@@ -1474,18 +1474,50 @@
         group.addLayer(strip);
       }
 
-      const outline = L.polygon(
-        zone.vertices.map((v) => [v.lat, v.lng]),
-        {
-          color: "#86efac",
-          weight: 3,
-          fill: false,
-          fillOpacity: 0,
-          pane: "zonesPane",
-        }
+      const borderWeight = 3;
+      const edgeSegs = 16;
+      const popupHtml = `<strong>${escapeHtml(zone.name)}</strong><br>Green (south) → yellow (north)`;
+
+      const southEdge = L.polyline(
+        [
+          [b.south, b.west],
+          [b.south, b.east],
+        ],
+        { color: green, weight: borderWeight, pane: "zonesPane" }
       ).addTo(map);
-      outline.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
-      group.addLayer(outline);
+      southEdge.bindPopup(popupHtml);
+      group.addLayer(southEdge);
+
+      const northEdge = L.polyline(
+        [
+          [b.north, b.west],
+          [b.north, b.east],
+        ],
+        { color: yellow, weight: borderWeight, pane: "zonesPane" }
+      ).addTo(map);
+      group.addLayer(northEdge);
+
+      for (let i = 0; i < edgeSegs; i++) {
+        const lat0 = b.south + ((b.north - b.south) * i) / edgeSegs;
+        const lat1 = b.south + ((b.north - b.south) * (i + 1)) / edgeSegs;
+        const color = lerpHex(green, yellow, (i + 0.5) / edgeSegs);
+        [b.west, b.east].forEach((lng) => {
+          const edge = L.polyline(
+            [
+              [lat0, lng],
+              [lat1, lng],
+            ],
+            { color, weight: borderWeight, pane: "zonesPane" }
+          ).addTo(map);
+          group.addLayer(edge);
+        });
+      }
+    }
+
+    function crowdCornerColor(vertexIndex) {
+      const green = "#22c55e";
+      const yellow = "#facc15";
+      return vertexIndex < 2 ? yellow : green;
     }
 
     function combinedBounds(zones) {
@@ -1626,10 +1658,12 @@
         }
 
         zone.vertices.forEach((v, i) => {
+          const cornerFill =
+            zone.role === "crowd" ? crowdCornerColor(i) : style.markerFill;
           const marker = L.circleMarker([v.lat, v.lng], {
             radius: 5,
             color: "#ffffff",
-            fillColor: style.markerFill,
+            fillColor: cornerFill,
             fillOpacity: 1,
             weight: 2,
           }).addTo(map);
