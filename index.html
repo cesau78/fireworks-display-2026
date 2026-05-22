@@ -907,19 +907,23 @@
       );
     }
 
+    function summarizeBucket(cues) {
+      const pieces = cues.length;
+      const bangs = cues.reduce((sum, row) => sum + (Number(row.Bangs) || 0), 0);
+      const pieceWord = pieces === 1 ? "piece" : "pieces";
+      const bangWord = bangs === 1 ? "bang" : "bangs";
+      return `${pieces} ${pieceWord}, ${bangs.toLocaleString()} ${bangWord}`;
+    }
+
     function summaryBucketPopup(bucket) {
       const endMin = bucket.minFromStart + 5;
       const endFt = Math.round((endMin * 60) / FUSE_BURN_SEC_PER_FT);
-      const header =
+      const summary = bucket.cues.length ? summarizeBucket(bucket.cues) : "0 pieces, 0 bangs";
+      return (
         `<strong>${escapeHtml(bucket.label)} – ${formatShowOffset(endMin)}</strong><br>` +
-        `${Math.round(bucket.distFt)}–${endFt} ft · ${bucket.cues.length} cue(s)<hr style="border-color:var(--border);margin:0.4rem 0">`;
-      const list = bucket.cues
-        .map((row) => {
-          const piece = row.Piece || row.Item || "—";
-          return `<div style="margin-bottom:0.35rem"><strong>#${escapeHtml(String(row.Sequence))}</strong> ${escapeHtml(row.Start || "")} · ${escapeHtml(piece)}</div>`;
-        })
-        .join("");
-      return header + (list || "<em>No cues in this window</em>");
+        `${Math.round(bucket.distFt)}–${endFt} ft on fuse<br>` +
+        `<strong>${escapeHtml(summary)}</strong>`
+      );
     }
 
     function renderFuseSummaryMarkers() {
