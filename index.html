@@ -360,7 +360,7 @@
       </div>
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/zone.json</code> —
-        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>deployment</code> | <code>crowd</code>), bounds, and vertices.
+        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>bonfire</code> | <code>deployment</code> | <code>safety</code> | <code>crowd</code>), bounds, and vertices.
       </p>
     </section>
 
@@ -403,11 +403,23 @@
     const DATA_BASE = "data";
 
     const ZONE_STYLES = {
+      bonfire: {
+        color: "#dc2626",
+        fillColor: "#ef4444",
+        fillOpacity: 0.5,
+        markerFill: "#f87171",
+      },
       deployment: {
-        color: "#fbbf24",
-        fillColor: "#3b82f6",
-        fillOpacity: 0.45,
-        markerFill: "#fbbf24",
+        color: "#ca8a04",
+        fillColor: "#facc15",
+        fillOpacity: 0.55,
+        markerFill: "#eab308",
+      },
+      safety: {
+        color: "#9ca3af",
+        fillColor: "#6b7280",
+        fillOpacity: 0.5,
+        markerFill: "#9ca3af",
       },
       crowd: {
         color: "#86efac",

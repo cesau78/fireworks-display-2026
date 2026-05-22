@@ -28,8 +28,11 @@ Open `index.html` locally with any static server (browsers block `fetch` on `fil
 npx --yes serve .
 ```
 
-## Zones
+## Zones (north → south)
 
-**Deployment** — 50 ft × 100 ft (E–W × N–S), centered on the original east/west midpoint. NW `45.04879, -90.487793` to SE `45.048517, -90.487599`.
-
-**Crowd** — Same 50 ft width, 50 ft long; north edge 100 ft south of deployment. NW `45.048243, -90.487793` to SE `45.048106, -90.487599`.
+| Zone | Size | Style |
+|------|------|--------|
+| **Bonfire** | 20 × 20 ft, centered on deployment, north of deployment | Red |
+| **Deployment** | 50 × 100 ft | Yellow |
+| **Safety** | 50 × 100 ft (between deployment and crowd) | Grey |
+| **Crowd** | 50 × 50 ft | Green |

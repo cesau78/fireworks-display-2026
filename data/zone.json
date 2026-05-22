@@ -1,6 +1,29 @@
 {
-  "description": "Show boundaries for shell deployment and spectator crowd areas.",
+  "description": "Show boundaries for shell deployment, safety setback, spectators, and bonfire.",
   "zones": [
+    {
+      "id": "bonfire-zone",
+      "name": "Bonfire",
+      "role": "bonfire",
+      "description": "20 ft × 20 ft area centered east–west on deployment, directly north of the deployment zone.",
+      "corners": [
+        { "label": "NW", "lat": 45.048845, "lng": -90.487735 },
+        { "label": "SE", "lat": 45.04879, "lng": -90.487657 }
+      ],
+      "bounds": {
+        "north": 45.048845,
+        "south": 45.04879,
+        "east": -90.487657,
+        "west": -90.487735
+      },
+      "vertices": [
+        { "lat": 45.048845, "lng": -90.487735 },
+        { "lat": 45.048845, "lng": -90.487657 },
+        { "lat": 45.04879, "lng": -90.487657 },
+        { "lat": 45.04879, "lng": -90.487735 }
+      ],
+      "notes": ""
+    },
     {
       "id": "deployment-zone",
       "name": "Fireworks deployment zone",
@@ -25,10 +48,33 @@
       "notes": ""
     },
     {
+      "id": "safety-zone",
+      "name": "Safety zone",
+      "role": "safety",
+      "description": "100 ft setback between deployment and crowd. Same 50 ft width as deployment.",
+      "corners": [
+        { "label": "NW", "lat": 45.048517, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.048243, "lng": -90.487599 }
+      ],
+      "bounds": {
+        "north": 45.048517,
+        "south": 45.048243,
+        "east": -90.487599,
+        "west": -90.487793
+      },
+      "vertices": [
+        { "lat": 45.048517, "lng": -90.487793 },
+        { "lat": 45.048517, "lng": -90.487599 },
+        { "lat": 45.048243, "lng": -90.487599 },
+        { "lat": 45.048243, "lng": -90.487793 }
+      ],
+      "notes": ""
+    },
+    {
       "id": "crowd-zone",
       "name": "Crowd zone",
       "role": "crowd",
-      "description": "Spectator area south of deployment. Same 50 ft width; 50 ft long. North edge is 100 ft south of the deployment zone south boundary.",
+      "description": "Spectator area south of the safety zone. Same 50 ft width; 50 ft long.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048106, "lng": -90.487599 }
