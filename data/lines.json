@@ -3,7 +3,7 @@
   "lines": [
     {
       "id": "fuse-path",
-      "label": "Fuse path",
+      "label": "Firing sequence",
       "type": "fuse",
       "color": "#dc2626",
       "weight": 4,

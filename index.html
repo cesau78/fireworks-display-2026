@@ -686,7 +686,11 @@
           iconSize: [12, 12],
           iconAnchor: [6, 10],
         });
-        const marker = L.marker([pt.lat, pt.lng], { icon, interactive: false });
+        const marker = L.marker([pt.lat, pt.lng], {
+          icon,
+          interactive: false,
+          pane: "linesPane",
+        });
         mapLinesLayer.addLayer(marker);
       }
     }
@@ -750,19 +754,33 @@
       document.getElementById("btn-draw-cancel").disabled = n === 0 && !drawModeActive;
     }
 
+    function ensureLinesPane(map) {
+      if (!map.getPane("linesPane")) {
+        map.createPane("linesPane");
+        map.getPane("linesPane").style.zIndex = 650;
+        map.getPane("linesPane").style.pointerEvents = "none";
+      }
+    }
+
+    function addPolylineToLinesLayer(latLngs, options) {
+      const layer = L.polyline(latLngs, { pane: "linesPane", ...options });
+      mapLinesLayer.addLayer(layer);
+      return layer;
+    }
+
     function renderLinesOnMap() {
-      if (!mapLinesLayer) return;
+      if (!mapLinesLayer || !fieldMap) return;
+      ensureLinesPane(fieldMap);
       mapLinesLayer.clearLayers();
-      allLines().forEach((line) => {
+      const lines = allLines();
+      if (lines.length === 0) return;
+
+      lines.forEach((line) => {
         const latLngs = lineToLatLngs(line);
         if (latLngs.length < 2) return;
         const isFuse = line.type === "fuse";
-        const layer = L.polyline(latLngs, {
-          color: line.color || (isFuse ? "#dc2626" : DEFAULT_LINE_COLOR),
-          weight: line.weight || (isFuse ? 4 : DEFAULT_LINE_WEIGHT),
-          opacity: 0.98,
-          dashArray: isFuse ? null : undefined,
-        });
+        const color = line.color || (isFuse ? "#dc2626" : DEFAULT_LINE_COLOR);
+        const weight = line.weight || (isFuse ? 5 : DEFAULT_LINE_WEIGHT);
         const label = line.label || line.id || "Line";
         const totalFt = latLngs.reduce(
           (sum, _, i) =>
@@ -770,16 +788,29 @@
           0
         );
         const lenNote = line.length_ft
-          ? `${line.length_ft} ft design`
+          ? `${line.length_ft} ft`
           : `${Math.round(totalFt)} ft`;
+
+        if (isFuse) {
+          addPolylineToLinesLayer(latLngs, {
+            color: "#ffffff",
+            weight: weight + 3,
+            opacity: 0.95,
+          });
+        }
+        const layer = addPolylineToLinesLayer(latLngs, {
+          color,
+          weight,
+          opacity: 1,
+        });
         layer.bindPopup(
           `<strong>${escapeHtml(label)}</strong><br>${lenNote} · ${latLngs.length} points`
         );
-        mapLinesLayer.addLayer(layer);
         if (isFuse && line.arrow_interval_ft) {
           addFuseArrows(fieldMap, latLngs, line.arrow_interval_ft);
         }
       });
+      mapLinesLayer.bringToFront();
     }
 
     function updateLinesPanel() {
@@ -1023,12 +1054,17 @@
         lng: (allBounds.east + allBounds.west) / 2,
       };
 
-      document.getElementById("zone-legend").innerHTML = zones
+      const zoneLegend = zones
         .map((z) => {
           const s = zoneStyle(z);
           return `<span><i style="border-color:${s.color};background:${s.fillColor}"></i>${escapeHtml(z.name)}</span>`;
         })
         .join("");
+      const hasFuse = allLines().some((l) => l.type === "fuse");
+      const fuseLegend = hasFuse
+        ? `<span><i style="border-color:#dc2626;background:linear-gradient(90deg,#dc2626 60%,transparent)"></i>Firing sequence</span>`
+        : "";
+      document.getElementById("zone-legend").innerHTML = zoneLegend + fuseLegend;
 
       document.getElementById("zone-coords").innerHTML = zones.map(renderZoneDetail).join("");
 
@@ -1101,7 +1137,12 @@
         addZoneDimensionLabels(map, zone);
       });
 
-      map.fitBounds(group.getBounds(), { padding: [28, 28] });
+      const fitBounds = group.getBounds();
+      allLines().forEach((line) => {
+        (line.points || []).forEach((p) => fitBounds.extend([p.lat, p.lng]));
+      });
+
+      map.fitBounds(fitBounds, { padding: [28, 28] });
       const fitZoom = map.getZoom();
       map.setZoom(Math.max(fitZoom - 4, map.getMinZoom()));
 
@@ -1218,10 +1259,13 @@
           loadJson("zone.json"),
           loadJson("placement.json"),
           loadJson("sequence.json"),
-          loadJsonOptional("lines.json", { lines: [] }),
+          loadJson("lines.json"),
         ]);
 
         repoLines = linesData.lines || [];
+        if (!repoLines.some((l) => l.type === "fuse")) {
+          console.warn("lines.json: no fuse / firing sequence path found");
+        }
         localLines = loadLocalLines().map((line) => ({ ...line, _local: true }));
         renderZones(zone);
         renderPlacement(placement, zone);
