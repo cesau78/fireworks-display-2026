@@ -1,5 +1,5 @@
 {
-  "description": "Show boundaries for shell deployment, safety setback, spectators, bonfire, and dryer.",
+  "description": "Show boundaries for shell deployment, DMZ, spectators, bonfire, and dryer.",
   "zones": [
     {
       "id": "deployment-zone",
@@ -25,10 +25,10 @@
       "notes": ""
     },
     {
-      "id": "safety-zone",
-      "name": "Safety zone",
-      "role": "safety",
-      "description": "50 ft setback south of deployment (50 ft wide × 50 ft long). Bonfire and dryer are in the north corners inside this zone.",
+      "id": "dmz-zone",
+      "name": "DMZ",
+      "role": "dmz",
+      "description": "50 ft setback south of deployment (50 ft wide × 50 ft long). Bonfire and dryer are in the north corners inside the DMZ.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048106, "lng": -90.487599 }
@@ -51,7 +51,7 @@
       "id": "bonfire-zone",
       "name": "Bonfire",
       "role": "bonfire",
-      "description": "20 ft × 20 ft inside the safety zone, anchored at the north-east corner.",
+      "description": "20 ft × 20 ft inside the DMZ, anchored at the north-east corner.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487677 },
         { "label": "SE", "lat": 45.048188, "lng": -90.487599 }
@@ -74,7 +74,7 @@
       "id": "dryer-zone",
       "name": "Dryer",
       "role": "dryer",
-      "description": "10 ft × 10 ft inside the safety zone, anchored at the north-west corner.",
+      "description": "10 ft × 10 ft inside the DMZ, anchored at the north-west corner.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048216, "lng": -90.487754 }
@@ -97,7 +97,7 @@
       "id": "crowd-zone",
       "name": "Crowd zone",
       "role": "crowd",
-      "description": "Spectator area south of the safety zone. Same 50 ft width; 100 ft long.",
+      "description": "Spectator area south of the DMZ. Same 50 ft width; 100 ft long.",
       "corners": [
         { "label": "NW", "lat": 45.048106, "lng": -90.487793 },
         { "label": "SE", "lat": 45.047832, "lng": -90.487599 }
