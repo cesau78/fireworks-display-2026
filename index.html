@@ -1128,7 +1128,7 @@
         ]);
 
         repoLines = linesData.lines || [];
-        localLines = loadLocalLines();
+        localLines = loadLocalLines().map((line) => ({ ...line, _local: true }));
         renderZones(zone);
         renderPlacement(placement, zone);
         renderSequence(sequence);
