@@ -148,6 +148,8 @@
     <text class="lbl" x="0" y="8" text-anchor="middle">depth - tube rows along Y</text>
   </g>
 
+  <g id="assembly-panel">
+  <rect x="710" y="510" width="660" height="450" fill="none" stroke="none" aria-hidden="true"/>
   <g id="iso" transform="translate(1040, 780)">
     <line x1="-280" y1="-120" x2="120" y2="40" stroke="#1a5a8a" stroke-width="0.5" opacity="0.4"/>
     <line x1="280" y1="-120" x2="-120" y2="40" stroke="#1a5a8a" stroke-width="0.5" opacity="0.4"/>
@@ -182,6 +184,7 @@
       <circle class="step-bg" cx="0" cy="88" r="10"/><text class="step" x="0" y="92" text-anchor="middle">5</text>
       <text class="lbl" x="16" y="92">Tubes (tilted)</text>
     </g>
+  </g>
   </g>
 
   <g transform="translate(55, 580)">

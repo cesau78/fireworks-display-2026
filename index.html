@@ -161,6 +161,71 @@
       display: block;
     }
 
+    .rack-assembly-view {
+      grid-column: 1 / -1;
+    }
+
+    .rack-assembly-view h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .rack-assembly-crop {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      aspect-ratio: 660 / 450;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0c2d4a;
+    }
+
+    .rack-assembly-crop img {
+      position: absolute;
+      width: 212.121212%;
+      height: 217.777778%;
+      max-width: none;
+      left: -107.575758%;
+      top: -113.333333%;
+      display: block;
+    }
+
+    .rack-assembly-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.75rem;
+      margin: 0.6rem 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .rack-assembly-steps li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .rack-assembly-steps strong {
+      color: #f0a040;
+      font-weight: 700;
+    }
+
+    .rack-assembly-link {
+      margin: 0.5rem 0 0;
+      font-size: 0.8rem;
+    }
+
+    .rack-assembly-link a {
+      color: #93c5fd;
+    }
+
     .rack-spec-table {
       font-size: 0.85rem;
     }
@@ -294,14 +359,64 @@
       display: inline-block;
     }
 
-    .zone-detail {
-      padding: 1rem;
+    .zone-coords-panel {
       border-top: 1px solid var(--border);
     }
 
-    .zone-detail h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
+    .zone-detail-disclosure {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .zone-detail-disclosure:last-child {
+      border-bottom: none;
+    }
+
+    .zone-detail-disclosure summary {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      list-style: none;
+      user-select: none;
+    }
+
+    .zone-detail-disclosure summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .zone-detail-disclosure summary::before {
+      content: "";
+      width: 0.45rem;
+      height: 0.45rem;
+      margin-right: 0.5rem;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(-45deg);
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+
+    .zone-detail-disclosure[open] summary::before {
+      transform: rotate(45deg);
+    }
+
+    .zone-detail-disclosure summary:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .zone-detail-hint {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .zone-detail {
+      padding: 0 1rem 1rem;
     }
 
     .zone-detail p {
@@ -629,7 +744,7 @@
           <ul id="lines-list"></ul>
         </div>
         <div class="zone-legend" id="zone-legend"></div>
-        <div id="zone-coords"></div>
+        <div id="zone-coords" class="zone-coords-panel" aria-label="Zone details (expand to view)"></div>
         <div class="links-row" id="zone-links"></div>
       </div>
       <p class="schema-hint">
@@ -663,7 +778,8 @@
       </div>
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/finale-rack.json</code> · BOM:
-        <code>data/finale-rack-bom.json</code> · OpenSCAD:
+        <code>data/finale-rack-bom.json</code> · Blueprint:
+        <code>design/finale-mortar-rack/blueprint.svg</code> · OpenSCAD:
         <code>design/finale-mortar-rack/rack.scad</code>
       </p>
     </section>
@@ -1446,21 +1562,26 @@
         lng: (bounds.east + bounds.west) / 2,
       };
       return `
-        <div class="zone-detail">
-          <h3>${escapeHtml(zone.name)}</h3>
-          <p>${escapeHtml(zone.description || "")}</p>
-          <div class="coords-grid">
-            <div class="coord-block"><label>Width (E–W)</label><code>${formatFeet(widthFt)}</code></div>
-            <div class="coord-block"><label>Length (N–S)</label><code>${formatFeet(lengthFt)}</code></div>
-            <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
-            <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
-            <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
-            <div class="coord-block"><label>West</label><code>${bounds.west}</code></div>
-            <div class="coord-block"><label>NW corner</label><code>${fmtCoord(zone.corners[0].lat, zone.corners[0].lng)}</code></div>
-            <div class="coord-block"><label>SE corner</label><code>${fmtCoord(zone.corners[1].lat, zone.corners[1].lng)}</code></div>
-            <div class="coord-block"><label>Center</label><code>${fmtCoord(center.lat, center.lng)}</code></div>
+        <details class="zone-detail-disclosure">
+          <summary>
+            <span>${escapeHtml(zone.name)}</span>
+            <span class="zone-detail-hint">${formatFeet(widthFt)} E-W x ${formatFeet(lengthFt)} N-S</span>
+          </summary>
+          <div class="zone-detail">
+            <p>${escapeHtml(zone.description || "")}</p>
+            <div class="coords-grid">
+              <div class="coord-block"><label>Width (E-W)</label><code>${formatFeet(widthFt)}</code></div>
+              <div class="coord-block"><label>Length (N-S)</label><code>${formatFeet(lengthFt)}</code></div>
+              <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
+              <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
+              <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
+              <div class="coord-block"><label>West</label><code>${bounds.west}</code></div>
+              <div class="coord-block"><label>NW corner</label><code>${fmtCoord(zone.corners[0].lat, zone.corners[0].lng)}</code></div>
+              <div class="coord-block"><label>SE corner</label><code>${fmtCoord(zone.corners[1].lat, zone.corners[1].lng)}</code></div>
+              <div class="coord-block"><label>Center</label><code>${fmtCoord(center.lat, center.lng)}</code></div>
+            </div>
           </div>
-        </div>`;
+        </details>`;
     }
 
     function renderZones(zoneData) {
@@ -1731,6 +1852,21 @@
         }
       }
 
+      const blueprintUrl = "design/finale-mortar-rack/blueprint.svg";
+      const assemblySteps = [
+        "Green columns",
+        "Blue mid rows",
+        "Brown ends",
+        "Dowels",
+        "Tubes (tilted)",
+      ];
+      const assemblyStepsHtml = assemblySteps
+        .map(
+          (label, i) =>
+            `<li><strong>${i + 1}</strong> ${escapeHtml(label)}</li>`
+        )
+        .join("");
+
       wrap.innerHTML = `
         <div class="rack-diagrams">
           <div class="rack-diagram">
@@ -1748,6 +1884,23 @@
               <text x="8" y="${gridH / 2}" fill="#64748b" font-size="9" transform="rotate(-90 8 ${gridH / 2})">+Y depth</text>
               <text x="${gridW / 2}" y="${gridH - 4}" fill="#64748b" font-size="10" text-anchor="middle">+X rows (fan)</text>
             </svg>
+          </div>
+          <div class="rack-assembly-view rack-diagram">
+            <h4>Assembly — isometric (exploded build order)</h4>
+            <div class="rack-assembly-crop">
+              <img
+                src="${blueprintUrl}"
+                alt="Isometric assembly view: green columns, blue mid rows, brown ends, dowels, and tubes"
+                width="1400"
+                height="980"
+                loading="lazy"
+              />
+            </div>
+            <ul class="rack-assembly-steps" aria-label="Assembly order">${assemblyStepsHtml}</ul>
+            <p class="rack-assembly-link">
+              <a href="${blueprintUrl}" target="_blank" rel="noopener">Full four-view blueprint</a>
+              (plan, front, side, assembly) · per rack, build ×${rackN}
+            </p>
           </div>
         </div>
         <table class="rack-spec-table">
