@@ -946,7 +946,9 @@
         }).addTo(map);
       }
 
-      placeLabel(b.north + latPad, midLng, formatFeet(widthFt), "dim-width");
+      if (zone.role === "deployment" || zone.id === "deployment-zone") {
+        placeLabel(b.north + latPad, midLng, formatFeet(widthFt), "dim-width");
+      }
       placeLabel(midLat, b.east + lngPad, formatFeet(lengthFt), "dim-length");
     }
 
