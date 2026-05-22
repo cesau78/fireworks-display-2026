@@ -18,7 +18,7 @@ Edit JSON under `data/` via pull requests:
 
 | File | Purpose |
 |------|---------|
-| `data/zone.json` | Deployment boundary (map polygon) |
+| `data/zone.json` | Zone boundaries (`zones[]`: deployment, crowd, …) |
 | `data/placement.json` | Mortar/rack positions (`id`, `lat`, `lng`, `label`, `notes`) |
 | `data/sequence.json` | Cues (`sort`, `time_sec`, `position_id`, `effect`, `notes`) |
 
@@ -28,6 +28,8 @@ Open `index.html` locally with any static server (browsers block `fetch` on `fil
 npx --yes serve .
 ```
 
-## Zone (initial)
+## Zones
 
-Rectangle from NW `45.048785, -90.487844` to SE `45.048522, -90.487548`.
+**Deployment** — NW `45.048785, -90.487844` to SE `45.048522, -90.487548`.
+
+**Crowd** — Same width, directly south of deployment; height is half the deployment zone (north edge shared with deployment south edge). NW `45.048522, -90.487844` to SE `45.048391, -90.487548`.

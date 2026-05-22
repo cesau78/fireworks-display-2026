@@ -142,12 +142,49 @@
       background: #1a1f2e;
     }
 
+    .zone-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .zone-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .zone-legend i {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 2px solid;
+      display: inline-block;
+    }
+
+    .zone-detail {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .zone-detail h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .zone-detail p {
+      margin: 0 0 0.75rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
     .coords-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 0.75rem;
-      padding: 1rem;
-      border-top: 1px solid var(--border);
     }
 
     .coord-block label {
@@ -283,13 +320,14 @@
       <h2><span class="badge">Zone</span> Zone definitions</h2>
       <p class="section-lead" id="zone-description">Loading…</p>
       <div class="card">
-        <div id="map" role="img" aria-label="Map of deployment zone"></div>
-        <div class="coords-grid" id="zone-coords"></div>
+        <div id="map" role="img" aria-label="Map of deployment and crowd zones"></div>
+        <div class="zone-legend" id="zone-legend"></div>
+        <div id="zone-coords"></div>
         <div class="links-row" id="zone-links"></div>
       </div>
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/zone.json</code> —
-        corners, bounds, and <code>vertices</code> (closed polygon). Optional <code>notes</code> for hazards or setbacks.
+        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>deployment</code> | <code>crowd</code>), bounds, and vertices.
       </p>
     </section>
 
@@ -331,6 +369,31 @@
   <script>
     const DATA_BASE = "data";
 
+    const ZONE_STYLES = {
+      deployment: {
+        color: "#fbbf24",
+        fillColor: "#3b82f6",
+        fillOpacity: 0.45,
+        markerFill: "#fbbf24",
+      },
+      crowd: {
+        color: "#86efac",
+        fillColor: "#22c55e",
+        fillOpacity: 0.4,
+        markerFill: "#86efac",
+      },
+    };
+
+    function normalizeZoneData(data) {
+      if (data.zones) return data;
+      return { description: data.description || "", zones: [data] };
+    }
+
+    function getDeploymentZone(data) {
+      const { zones } = normalizeZoneData(data);
+      return zones.find((z) => z.id === "deployment-zone" || z.role === "deployment") || zones[0];
+    }
+
     function showError(msg) {
       const el = document.getElementById("load-error");
       el.textContent = msg;
@@ -359,31 +422,75 @@
       return `https://www.google.com/maps?q=${lat},${lng}&z=19`;
     }
 
-    function renderZone(zone) {
-      document.getElementById("zone-description").textContent =
-        zone.description || "Deployment boundary for shells.";
+    function zoneStyle(zone) {
+      return ZONE_STYLES[zone.role] || ZONE_STYLES.deployment;
+    }
 
+    function combinedBounds(zones) {
+      return zones.reduce(
+        (acc, z) => ({
+          north: Math.max(acc.north, z.bounds.north),
+          south: Math.min(acc.south, z.bounds.south),
+          east: Math.max(acc.east, z.bounds.east),
+          west: Math.min(acc.west, z.bounds.west),
+        }),
+        {
+          north: -Infinity,
+          south: Infinity,
+          east: -Infinity,
+          west: Infinity,
+        }
+      );
+    }
+
+    function renderZoneDetail(zone) {
       const bounds = zone.bounds;
-      const verts = zone.vertices;
       const center = {
         lat: (bounds.north + bounds.south) / 2,
         lng: (bounds.east + bounds.west) / 2,
       };
+      return `
+        <div class="zone-detail">
+          <h3>${escapeHtml(zone.name)}</h3>
+          <p>${escapeHtml(zone.description || "")}</p>
+          <div class="coords-grid">
+            <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
+            <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
+            <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
+            <div class="coord-block"><label>West</label><code>${bounds.west}</code></div>
+            <div class="coord-block"><label>NW corner</label><code>${fmtCoord(zone.corners[0].lat, zone.corners[0].lng)}</code></div>
+            <div class="coord-block"><label>SE corner</label><code>${fmtCoord(zone.corners[1].lat, zone.corners[1].lng)}</code></div>
+            <div class="coord-block"><label>Center</label><code>${fmtCoord(center.lat, center.lng)}</code></div>
+          </div>
+        </div>`;
+    }
 
-      const coordsEl = document.getElementById("zone-coords");
-      coordsEl.innerHTML = `
-        <div class="coord-block"><label>North</label><code>${bounds.north}</code></div>
-        <div class="coord-block"><label>South</label><code>${bounds.south}</code></div>
-        <div class="coord-block"><label>East</label><code>${bounds.east}</code></div>
-        <div class="coord-block"><label>West</label><code>${bounds.west}</code></div>
-        <div class="coord-block"><label>NW corner</label><code>${fmtCoord(zone.corners[0].lat, zone.corners[0].lng)}</code></div>
-        <div class="coord-block"><label>SE corner</label><code>${fmtCoord(zone.corners[1].lat, zone.corners[1].lng)}</code></div>
-        <div class="coord-block"><label>Center</label><code>${fmtCoord(center.lat, center.lng)}</code></div>
-      `;
+    function renderZones(zoneData) {
+      const data = normalizeZoneData(zoneData);
+      const zones = data.zones;
+
+      document.getElementById("zone-description").textContent =
+        data.description || "Deployment and crowd boundaries.";
+
+      const allBounds = combinedBounds(zones);
+      const center = {
+        lat: (allBounds.north + allBounds.south) / 2,
+        lng: (allBounds.east + allBounds.west) / 2,
+      };
+
+      document.getElementById("zone-legend").innerHTML = zones
+        .map((z) => {
+          const s = zoneStyle(z);
+          return `<span><i style="border-color:${s.color};background:${s.fillColor}"></i>${escapeHtml(z.name)}</span>`;
+        })
+        .join("");
+
+      document.getElementById("zone-coords").innerHTML = zones.map(renderZoneDetail).join("");
 
       const linksEl = document.getElementById("zone-links");
+      const deployment = getDeploymentZone(zoneData);
       linksEl.innerHTML = `
-        <a href="${googleMapsOutlineUrl(verts, center)}" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a href="${googleMapsOutlineUrl(deployment.vertices, center)}" target="_blank" rel="noopener">Deployment outline (Google Maps)</a>
         <a href="https://www.google.com/maps/@${center.lat},${center.lng},19z/data=!3m1!1e3" target="_blank" rel="noopener">Google Maps (satellite)</a>
         <a href="https://www.openstreetmap.org/#map=19/${center.lat}/${center.lng}" target="_blank" rel="noopener">OpenStreetMap</a>
       `;
@@ -419,32 +526,38 @@
         )
         .addTo(map);
 
-      const latLngs = verts.map((v) => [v.lat, v.lng]);
-      const polygon = L.polygon(latLngs, {
-        color: "#fbbf24",
-        weight: 3,
-        fillColor: "#3b82f6",
-        fillOpacity: 0.45,
-      }).addTo(map);
+      const group = L.featureGroup();
 
-      polygon.bindPopup(`<strong>${zone.name}</strong><br>Deployment zone`);
+      zones.forEach((zone) => {
+        const style = zoneStyle(zone);
+        const latLngs = zone.vertices.map((v) => [v.lat, v.lng]);
+        const polygon = L.polygon(latLngs, {
+          color: style.color,
+          weight: 3,
+          fillColor: style.fillColor,
+          fillOpacity: style.fillOpacity,
+        }).addTo(map);
 
-      verts.forEach((v, i) => {
-        L.circleMarker([v.lat, v.lng], {
-          radius: 6,
-          color: "#ffffff",
-          fillColor: "#fbbf24",
-          fillOpacity: 1,
-          weight: 2,
-        })
-          .addTo(map)
-          .bindPopup(`Vertex ${i + 1}<br>${fmtCoord(v.lat, v.lng)}`);
+        polygon.bindPopup(`<strong>${escapeHtml(zone.name)}</strong>`);
+        group.addLayer(polygon);
+
+        zone.vertices.forEach((v, i) => {
+          const marker = L.circleMarker([v.lat, v.lng], {
+            radius: 5,
+            color: "#ffffff",
+            fillColor: style.markerFill,
+            fillOpacity: 1,
+            weight: 2,
+          }).addTo(map);
+          marker.bindPopup(`${escapeHtml(zone.name)} — vertex ${i + 1}<br>${fmtCoord(v.lat, v.lng)}`);
+          group.addLayer(marker);
+        });
       });
 
-      map.fitBounds(polygon.getBounds(), { padding: [24, 24] });
+      map.fitBounds(group.getBounds(), { padding: [28, 28] });
     }
 
-    function renderPlacement(placement, zone) {
+    function renderPlacement(placement, zoneData) {
       document.getElementById("placement-description").textContent =
         placement.description || "Mortar and rack positions within the zone.";
 
@@ -466,7 +579,7 @@
 
       const rows = positions
         .map((p) => {
-          const inZone = pointInZone(p.lat, p.lng, zone.bounds);
+          const inZone = pointInZone(p.lat, p.lng, getDeploymentZone(zoneData).bounds);
           const mapLink = googleMapsPointUrl(p.lat, p.lng);
           return `<tr>
             <td><strong>${escapeHtml(p.id)}</strong></td>
@@ -552,7 +665,7 @@
           loadJson("sequence.json"),
         ]);
 
-        renderZone(zone);
+        renderZones(zone);
         renderPlacement(placement, zone);
         renderSequence(sequence);
 
