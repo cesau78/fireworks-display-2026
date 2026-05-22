@@ -30,6 +30,6 @@ npx --yes serve .
 
 ## Zones
 
-**Deployment** — NW `45.048785, -90.487844` to SE `45.048522, -90.487548`.
+**Deployment** — 50 ft × 100 ft (E–W × N–S), centered on the original east/west midpoint. NW `45.04879, -90.487793` to SE `45.048517, -90.487599`.
 
-**Crowd** — Same width, directly south of deployment; height is half the deployment zone (north edge shared with deployment south edge). NW `45.048522, -90.487844` to SE `45.048391, -90.487548`.
+**Crowd** — Same 50 ft width, directly south of deployment; 50 ft long (half of deployment). NW `45.048517, -90.487793` to SE `45.04838, -90.487599`.

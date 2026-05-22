@@ -5,22 +5,22 @@
       "id": "deployment-zone",
       "name": "Fireworks deployment zone",
       "role": "deployment",
-      "description": "Rectangular area where shells are deployed. All placement coordinates must fall inside this boundary.",
+      "description": "Rectangular area where shells are deployed (50 ft wide × 100 ft long). All placement coordinates must fall inside this boundary.",
       "corners": [
-        { "label": "NW", "lat": 45.048785, "lng": -90.487844 },
-        { "label": "SE", "lat": 45.048522, "lng": -90.487548 }
+        { "label": "NW", "lat": 45.04879, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.048517, "lng": -90.487599 }
       ],
       "bounds": {
-        "north": 45.048785,
-        "south": 45.048522,
-        "east": -90.487548,
-        "west": -90.487844
+        "north": 45.04879,
+        "south": 45.048517,
+        "east": -90.487599,
+        "west": -90.487793
       },
       "vertices": [
-        { "lat": 45.048785, "lng": -90.487844 },
-        { "lat": 45.048785, "lng": -90.487548 },
-        { "lat": 45.048522, "lng": -90.487548 },
-        { "lat": 45.048522, "lng": -90.487844 }
+        { "lat": 45.04879, "lng": -90.487793 },
+        { "lat": 45.04879, "lng": -90.487599 },
+        { "lat": 45.048517, "lng": -90.487599 },
+        { "lat": 45.048517, "lng": -90.487793 }
       ],
       "notes": ""
     },
@@ -28,22 +28,22 @@
       "id": "crowd-zone",
       "name": "Crowd zone",
       "role": "crowd",
-      "description": "Spectator area directly south of deployment. Same width as deployment; height is half the deployment zone, with its north edge on the deployment south boundary.",
+      "description": "Spectator area directly south of deployment. Same 50 ft width as deployment; 50 ft long (half of deployment), with its north edge on the deployment south boundary.",
       "corners": [
-        { "label": "NW", "lat": 45.048522, "lng": -90.487844 },
-        { "label": "SE", "lat": 45.048391, "lng": -90.487548 }
+        { "label": "NW", "lat": 45.048517, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.04838, "lng": -90.487599 }
       ],
       "bounds": {
-        "north": 45.048522,
-        "south": 45.048391,
-        "east": -90.487548,
-        "west": -90.487844
+        "north": 45.048517,
+        "south": 45.04838,
+        "east": -90.487599,
+        "west": -90.487793
       },
       "vertices": [
-        { "lat": 45.048522, "lng": -90.487844 },
-        { "lat": 45.048522, "lng": -90.487548 },
-        { "lat": 45.048391, "lng": -90.487548 },
-        { "lat": 45.048391, "lng": -90.487844 }
+        { "lat": 45.048517, "lng": -90.487793 },
+        { "lat": 45.048517, "lng": -90.487599 },
+        { "lat": 45.04838, "lng": -90.487599 },
+        { "lat": 45.04838, "lng": -90.487793 }
       ],
       "notes": ""
     }
