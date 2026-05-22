@@ -33,6 +33,6 @@ npx --yes serve .
 | Zone | Size | Style |
 |------|------|--------|
 | **Bonfire** | 20 × 20 ft, centered on deployment, north of deployment | Red |
-| **Deployment** | 50 × 100 ft | Yellow |
-| **Safety** | 50 × 100 ft (between deployment and crowd) | Grey |
-| **Crowd** | 50 × 50 ft | Green |
+| **Deployment** | 50 × 200 ft | Yellow |
+| **Safety** | 50 × 50 ft, directly south of deployment | Grey |
+| **Crowd** | 50 × 50 ft, south of safety | Green |

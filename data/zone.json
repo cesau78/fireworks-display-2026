@@ -28,22 +28,22 @@
       "id": "deployment-zone",
       "name": "Fireworks deployment zone",
       "role": "deployment",
-      "description": "Rectangular area where shells are deployed (50 ft wide × 100 ft long). All placement coordinates must fall inside this boundary.",
+      "description": "Rectangular area where shells are deployed (50 ft wide × 200 ft long). All placement coordinates must fall inside this boundary.",
       "corners": [
         { "label": "NW", "lat": 45.04879, "lng": -90.487793 },
-        { "label": "SE", "lat": 45.048517, "lng": -90.487599 }
+        { "label": "SE", "lat": 45.048243, "lng": -90.487599 }
       ],
       "bounds": {
         "north": 45.04879,
-        "south": 45.048517,
+        "south": 45.048243,
         "east": -90.487599,
         "west": -90.487793
       },
       "vertices": [
         { "lat": 45.04879, "lng": -90.487793 },
         { "lat": 45.04879, "lng": -90.487599 },
-        { "lat": 45.048517, "lng": -90.487599 },
-        { "lat": 45.048517, "lng": -90.487793 }
+        { "lat": 45.048243, "lng": -90.487599 },
+        { "lat": 45.048243, "lng": -90.487793 }
       ],
       "notes": ""
     },
@@ -51,30 +51,7 @@
       "id": "safety-zone",
       "name": "Safety zone",
       "role": "safety",
-      "description": "100 ft setback between deployment and crowd. Same 50 ft width as deployment.",
-      "corners": [
-        { "label": "NW", "lat": 45.048517, "lng": -90.487793 },
-        { "label": "SE", "lat": 45.048243, "lng": -90.487599 }
-      ],
-      "bounds": {
-        "north": 45.048517,
-        "south": 45.048243,
-        "east": -90.487599,
-        "west": -90.487793
-      },
-      "vertices": [
-        { "lat": 45.048517, "lng": -90.487793 },
-        { "lat": 45.048517, "lng": -90.487599 },
-        { "lat": 45.048243, "lng": -90.487599 },
-        { "lat": 45.048243, "lng": -90.487793 }
-      ],
-      "notes": ""
-    },
-    {
-      "id": "crowd-zone",
-      "name": "Crowd zone",
-      "role": "crowd",
-      "description": "Spectator area south of the safety zone. Same 50 ft width; 50 ft long.",
+      "description": "50 ft setback south of deployment (50 ft wide × 50 ft long). Same width as deployment.",
       "corners": [
         { "label": "NW", "lat": 45.048243, "lng": -90.487793 },
         { "label": "SE", "lat": 45.048106, "lng": -90.487599 }
@@ -90,6 +67,29 @@
         { "lat": 45.048243, "lng": -90.487599 },
         { "lat": 45.048106, "lng": -90.487599 },
         { "lat": 45.048106, "lng": -90.487793 }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "crowd-zone",
+      "name": "Crowd zone",
+      "role": "crowd",
+      "description": "Spectator area south of the safety zone. Same 50 ft width; 50 ft long.",
+      "corners": [
+        { "label": "NW", "lat": 45.048106, "lng": -90.487793 },
+        { "label": "SE", "lat": 45.047969, "lng": -90.487599 }
+      ],
+      "bounds": {
+        "north": 45.048106,
+        "south": 45.047969,
+        "east": -90.487599,
+        "west": -90.487793
+      },
+      "vertices": [
+        { "lat": 45.048106, "lng": -90.487793 },
+        { "lat": 45.048106, "lng": -90.487599 },
+        { "lat": 45.047969, "lng": -90.487599 },
+        { "lat": 45.047969, "lng": -90.487793 }
       ],
       "notes": ""
     }
