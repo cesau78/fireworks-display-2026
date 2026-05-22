@@ -22,7 +22,7 @@ Edit JSON under `data/` via pull requests:
 | `data/placement.json` | Mortar/rack positions (`id`, `lat`, `lng`, `label`, `notes`) |
 | `data/firing-sequence.csv` | Show sequence; fuse placement at 12 sec/ft from show start |
 | `data/sequence.json` | Legacy (optional); CSV drives the sequence table and map markers |
-| `data/lines.json` | Map lines (`points`: `{lat,lng}` arrays); or draw on site and copy JSON |
+| `data/lines.json` | Map lines (`points`: `{lat,lng}` arrays) |
 
 Open `index.html` locally with any static server (browsers block `fetch` on `file://`):
 
@@ -34,10 +34,10 @@ npx --yes serve .
 
 | Zone | Size | Style |
 |------|------|--------|
-| **Deployment** | 50 × 150 ft | Yellow |
+| **Fireworks Deployment Zone** | 50 × 150 ft | Yellow |
 | **DMZ** | 50 × 50 ft, south of deployment | Grey |
 | **Bonfire** | 20 × 20 ft, inside DMZ at NE corner | Red |
 | **Dryer** | 10 × 10 ft, inside DMZ at NW corner | Blue |
-| **Crowd** | 50 × 100 ft, south of DMZ | Green |
+| **Crowd Zone** | 50 × 100 ft, south of DMZ | Green (south, Dangerous) → yellow (north, More Dangerous) |
 
 **Maps:** Field map shows 5-minute summary dots on the fuse path; **Placement** section has a horseshoe schematic with every cue (click for details).

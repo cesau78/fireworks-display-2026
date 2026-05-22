@@ -146,68 +146,6 @@
       background: #1a1f2e;
     }
 
-    #map.draw-mode-active { cursor: crosshair; }
-
-    .map-toolbar {
-      position: absolute;
-      top: 0.5rem;
-      left: 0.5rem;
-      right: 0.5rem;
-      z-index: 1000;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      align-items: center;
-      pointer-events: none;
-    }
-
-    .map-toolbar .toolbar-inner {
-      pointer-events: auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      padding: 0.4rem;
-      background: rgba(12, 14, 20, 0.92);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
-    }
-
-    .map-toolbar button {
-      font-family: var(--font);
-      font-size: 0.8rem;
-      padding: 0.35rem 0.65rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--text);
-      cursor: pointer;
-    }
-
-    .map-toolbar button:hover:not(:disabled) {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .map-toolbar button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .map-toolbar button.active {
-      background: var(--accent);
-      color: #0c0e14;
-      border-color: var(--accent);
-      font-weight: 600;
-    }
-
-    .map-toolbar .draw-hint {
-      font-size: 0.75rem;
-      color: var(--muted);
-      padding: 0 0.25rem;
-      align-self: center;
-    }
-
     .lines-panel {
       padding: 0.75rem 1rem;
       border-top: 1px solid var(--border);
@@ -588,28 +526,18 @@
   <p id="load-error" class="status" role="alert"></p>
 
   <nav class="toc" aria-label="Sections">
-    <a href="#zone-definitions">Zone definitions</a>
+    <a href="#zone-definitions">Zone Definitions</a>
     <a href="#placement">Placement</a>
     <a href="#sequence">Sequence</a>
   </nav>
 
   <main>
     <section id="zone-definitions">
-      <h2><span class="badge">Zone</span> Zone definitions</h2>
+      <h2><span class="badge">Zone</span> Zone Definitions</h2>
       <p class="section-lead" id="zone-description">Loading…</p>
       <div class="card">
         <div class="map-wrap">
-          <div class="map-toolbar" aria-label="Map drawing tools">
-            <div class="toolbar-inner">
-              <button type="button" id="btn-draw-toggle" title="Click map to place line points">Draw line</button>
-              <button type="button" id="btn-draw-finish" disabled>Finish</button>
-              <button type="button" id="btn-draw-undo" disabled>Undo</button>
-              <button type="button" id="btn-draw-cancel" disabled>Cancel</button>
-              <button type="button" id="btn-copy-lines" title="Copy JSON for data/lines.json">Copy lines JSON</button>
-              <span class="draw-hint" id="draw-hint">Click points on the map · Finish when done</span>
-            </div>
-          </div>
-          <div id="map" role="application" aria-label="Field map with zones and drawable lines"></div>
+          <div id="map" role="application" aria-label="Field map with zones and fuse path"></div>
         </div>
         <div class="lines-panel" id="lines-panel" hidden>
           <h3>Lines on map</h3>
@@ -622,7 +550,7 @@
       <p class="schema-hint">
         <strong>Source:</strong> <code>data/zone.json</code> —
         <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>deployment</code> | <code>dmz</code> | <code>bonfire</code> | <code>dryer</code> | <code>crowd</code>), bounds, and vertices.
-        Draw lines on the map or edit <code>data/lines.json</code> (<code>points</code>: <code>{lat,lng}</code> arrays).
+        Edit <code>data/lines.json</code> for paths (<code>points</code>: <code>{lat,lng}</code> arrays).
       </p>
     </section>
 
@@ -678,8 +606,8 @@
     let repoLines = [];
     let localLines = [];
     let firingSequenceRows = [];
-    let drawDraft = { points: [], polyline: null, markers: [] };
-    let drawModeActive = false;
+    const CROWD_ZONE_CAPTION =
+      "Green (south): Dangerous · Yellow (north): More Dangerous";
 
     const ZONE_STYLES = {
       bonfire: {
@@ -821,6 +749,16 @@
       return h > 0 ? `+${h}:${String(m).padStart(2, "0")}` : `+${m}m`;
     }
 
+    function formatFuseFt(distFt) {
+      let feet = Math.floor(distFt);
+      let inches = Math.round((distFt - feet) * 12);
+      if (inches === 12) {
+        feet += 1;
+        inches = 0;
+      }
+      return `${feet}'${inches}"`;
+    }
+
     function fiveMinuteSummaryBuckets(rows) {
       if (!rows.length) return [];
       const t0Sec = Math.min(...rows.map((r) => parseShowTime(r.Start)));
@@ -918,7 +856,7 @@
         `<h3>#${escapeHtml(String(row.Sequence))} · ${escapeHtml(row.Start || "")}</h3>` +
         `<dl>` +
         `<dt>Phase</dt><dd>${escapeHtml(row.Phase || "—")}</dd>` +
-        `<dt>Fuse</dt><dd>${Math.round(distFt)} ft</dd>` +
+        `<dt>Fuse</dt><dd>${formatFuseFt(distFt)}</dd>` +
         `<dt>Piece</dt><dd>${escapeHtml(piece)}</dd>` +
         (row.Item ? `<dt>Item</dt><dd>${escapeHtml(row.Item)}</dd>` : "") +
         (row.Description ? `<dt>Description</dt><dd>${escapeHtml(row.Description)}</dd>` : "") +
@@ -941,7 +879,7 @@
       const summary = bucket.cues.length ? summarizeBucket(bucket.cues) : "0 pieces, 0 bangs";
       return (
         `<strong>${escapeHtml(bucket.label)} – ${formatShowOffset(endMin)}</strong><br>` +
-        `${Math.round(bucket.distFt)}–${endFt} ft on fuse<br>` +
+        `${formatFuseFt(bucket.distFt)}–${formatFuseFt(endFt)} on fuse<br>` +
         `<strong>${escapeHtml(summary)}</strong>`
       );
     }
@@ -1109,65 +1047,6 @@
       }
     }
 
-    function clearDrawDraft() {
-      if (drawDraft.polyline) {
-        fieldMap.removeLayer(drawDraft.polyline);
-        drawDraft.polyline = null;
-      }
-      drawDraft.markers.forEach((m) => fieldMap.removeLayer(m));
-      drawDraft.markers = [];
-      drawDraft.points = [];
-    }
-
-    function updateDrawDraftLayer() {
-      if (!fieldMap) return;
-      if (drawDraft.polyline) fieldMap.removeLayer(drawDraft.polyline);
-      if (drawDraft.points.length >= 2) {
-        drawDraft.polyline = L.polyline(drawDraft.points, {
-          color: DEFAULT_LINE_COLOR,
-          weight: DEFAULT_LINE_WEIGHT,
-          dashArray: "8 6",
-          opacity: 0.9,
-        }).addTo(fieldMap);
-      } else {
-        drawDraft.polyline = null;
-      }
-      drawDraft.markers.forEach((m) => fieldMap.removeLayer(m));
-      drawDraft.markers = drawDraft.points.map((pt) =>
-        L.circleMarker(pt, {
-          radius: 4,
-          color: "#fff",
-          fillColor: DEFAULT_LINE_COLOR,
-          fillOpacity: 1,
-          weight: 2,
-        }).addTo(fieldMap)
-      );
-    }
-
-    function setDrawMode(on) {
-      drawModeActive = on;
-      const mapEl = document.getElementById("map");
-      const btn = document.getElementById("btn-draw-toggle");
-      mapEl.classList.toggle("draw-mode-active", on);
-      btn.classList.toggle("active", on);
-      btn.textContent = on ? "Drawing…" : "Draw line";
-      document.getElementById("draw-hint").textContent = on
-        ? "Click the map to add points"
-        : "Click points on the map · Finish when done";
-      if (fieldMap) {
-        if (on) fieldMap.doubleClickZoom.disable();
-        else fieldMap.doubleClickZoom.enable();
-      }
-      updateDrawUi();
-    }
-
-    function updateDrawUi() {
-      const n = drawDraft.points.length;
-      document.getElementById("btn-draw-finish").disabled = n < 2;
-      document.getElementById("btn-draw-undo").disabled = n === 0;
-      document.getElementById("btn-draw-cancel").disabled = n === 0 && !drawModeActive;
-    }
-
     function ensureMapPanes(map) {
       const panes = [
         { name: "zonesPane", z: 380 },
@@ -1284,87 +1163,6 @@
       });
     }
 
-    function setupLineDrawing() {
-      const toggle = document.getElementById("btn-draw-toggle");
-      const finish = document.getElementById("btn-draw-finish");
-      const undo = document.getElementById("btn-draw-undo");
-      const cancel = document.getElementById("btn-draw-cancel");
-      const copyBtn = document.getElementById("btn-copy-lines");
-
-      toggle.addEventListener("click", () => {
-        if (drawModeActive) {
-          setDrawMode(false);
-          clearDrawDraft();
-          updateDrawDraftLayer();
-        } else {
-          clearDrawDraft();
-          setDrawMode(true);
-        }
-        updateDrawUi();
-      });
-
-      finish.addEventListener("click", () => {
-        if (drawDraft.points.length < 2) return;
-        const label = prompt("Line label (optional):", `Line ${localLines.length + 1}`);
-        const points = drawDraft.points.map(([lat, lng]) => ({
-          lat: Math.round(lat * 1e6) / 1e6,
-          lng: Math.round(lng * 1e6) / 1e6,
-        }));
-        localLines.push({
-          id: `line-${Date.now()}`,
-          label: label || undefined,
-          color: DEFAULT_LINE_COLOR,
-          weight: DEFAULT_LINE_WEIGHT,
-          points,
-          _local: true,
-        });
-        saveLocalLines();
-        clearDrawDraft();
-        setDrawMode(false);
-        renderLinesOnMap();
-        updateLinesPanel();
-        updateDrawUi();
-      });
-
-      undo.addEventListener("click", () => {
-        drawDraft.points.pop();
-        updateDrawDraftLayer();
-        updateDrawUi();
-      });
-
-      cancel.addEventListener("click", () => {
-        clearDrawDraft();
-        setDrawMode(false);
-        updateDrawDraftLayer();
-        updateDrawUi();
-      });
-
-      copyBtn.addEventListener("click", async () => {
-        const payload = {
-          description: "Paths and markings drawn on the field map.",
-          lines: allLines().map(({ _local, ...line }) => line),
-        };
-        const text = JSON.stringify(payload, null, 2);
-        try {
-          await navigator.clipboard.writeText(text);
-          copyBtn.textContent = "Copied!";
-          setTimeout(() => {
-            copyBtn.textContent = "Copy lines JSON";
-          }, 2000);
-        } catch {
-          prompt("Copy this into data/lines.json:", text);
-        }
-      });
-
-      fieldMap.on("click", (e) => {
-        if (!drawModeActive) return;
-        L.DomEvent.stopPropagation(e);
-        drawDraft.points.push([e.latlng.lat, e.latlng.lng]);
-        updateDrawDraftLayer();
-        updateDrawUi();
-      });
-    }
-
     const METERS_PER_DEG_LAT = 111320;
     const FEET_PER_METER = 3.28084;
 
@@ -1473,13 +1271,15 @@
             pane: "zonesPane",
           }
         ).addTo(map);
-        strip.bindPopup(`<strong>${escapeHtml(zone.name)}</strong><br>Green (south) → yellow (north)`);
+        strip.bindPopup(
+          `<strong>${escapeHtml(zone.name)}</strong><br>${escapeHtml(CROWD_ZONE_CAPTION)}`
+        );
         group.addLayer(strip);
       }
 
       const borderWeight = 3;
       const edgeSegs = 16;
-      const popupHtml = `<strong>${escapeHtml(zone.name)}</strong><br>Green (south) → yellow (north)`;
+      const popupHtml = `<strong>${escapeHtml(zone.name)}</strong><br>${escapeHtml(CROWD_ZONE_CAPTION)}`;
 
       const southEdge = L.polyline(
         [
@@ -1690,7 +1490,6 @@
       mapLinesLayer = L.featureGroup().addTo(fieldMap);
       firingMarkersLayer = L.featureGroup().addTo(fieldMap);
       renderLinesOnMap();
-      setupLineDrawing();
       updateLinesPanel();
     }
 
@@ -1760,7 +1559,7 @@
             <td>${escapeHtml(String(row.Sequence))}</td>
             <td>${escapeHtml(row.Start || "—")}</td>
             <td>${escapeHtml(row.Phase || "—")}</td>
-            <td><code>${Math.round(distFt)} ft</code></td>
+            <td><code>${formatFuseFt(distFt)}</code></td>
             <td><code>${escapeHtml(row.Piece || "—")}</code></td>
             <td>${escapeHtml((row.Item || row.Description || "").slice(0, 48))}${(row.Item || row.Description || "").length > 48 ? "…" : ""}</td>
           </tr>`
@@ -1770,7 +1569,7 @@
       wrap.innerHTML = `
         <table>
           <thead>
-            <tr><th>#</th><th>Start</th><th>Phase</th><th>Fuse ft</th><th>Piece</th><th>Item / description</th></tr>
+            <tr><th>#</th><th>Start</th><th>Phase</th><th>Fuse</th><th>Piece</th><th>Item / description</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>`;

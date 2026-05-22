@@ -3,7 +3,7 @@
   "zones": [
     {
       "id": "deployment-zone",
-      "name": "Fireworks deployment zone",
+      "name": "Fireworks Deployment Zone",
       "role": "deployment",
       "description": "Rectangular area where shells are deployed (50 ft wide × 150 ft long). All placement coordinates must fall inside this boundary.",
       "corners": [
@@ -95,9 +95,9 @@
     },
     {
       "id": "crowd-zone",
-      "name": "Crowd zone",
+      "name": "Crowd Zone",
       "role": "crowd",
-      "description": "Spectator area south of the DMZ. Same 50 ft width; 100 ft long.",
+      "description": "Spectator area south of the DMZ (50 ft wide × 100 ft long). Green (south) is Dangerous; yellow (north) is More Dangerous — closer to the show.",
       "corners": [
         { "label": "NW", "lat": 45.048106, "lng": -90.487793 },
         { "label": "SE", "lat": 45.047832, "lng": -90.487599 }
