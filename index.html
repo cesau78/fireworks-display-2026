@@ -411,6 +411,23 @@
       pointer-events: auto;
     }
 
+    .leaflet-fuse-summary-popup {
+      z-index: 800 !important;
+    }
+
+    .leaflet-fuse-summary-popup .leaflet-popup-content-wrapper {
+      background: rgba(12, 14, 20, 0.96);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+    }
+
+    .leaflet-fuse-summary-popup .leaflet-popup-tip {
+      background: rgba(12, 14, 20, 0.96);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
     .horseshoe-wrap {
       padding: 1rem;
       background: #1a1f2e;
@@ -947,7 +964,13 @@
           pane: "cuesPane",
           zIndexOffset: 1000,
         });
-        marker.bindPopup(summaryBucketPopup(bucket), { maxWidth: 320 });
+        marker.bindPopup(summaryBucketPopup(bucket), {
+          maxWidth: 280,
+          className: "fuse-summary-popup",
+          offset: [0, -22],
+          autoPan: true,
+          autoPanPadding: [48, 48],
+        });
         firingMarkersLayer.addLayer(marker);
       });
       firingMarkersLayer.bringToFront();
@@ -1159,6 +1182,10 @@
           el.style.pointerEvents = "none";
         }
       });
+      const popupPane = map.getPane("popupPane");
+      if (popupPane) popupPane.style.zIndex = "850";
+      const tooltipPane = map.getPane("tooltipPane");
+      if (tooltipPane) tooltipPane.style.zIndex = "840";
     }
 
     function ensureLinesPane(map) {
