@@ -13,6 +13,12 @@ New-Item -ItemType Directory -Force -Path $stlDir | Out-Null
 $jobs = @(
   @{ Scad = "rack-frame.scad"; Out = "rack-frame.stl" },
   @{ Scad = "rack-assembly.scad"; Out = "rack-assembly.stl" },
+  @{ Scad = "outside-row-boards.scad"; Out = "outside-row-boards.stl" },
+  @{ Scad = "column-dividers.scad"; Out = "column-dividers.stl" },
+  @{ Scad = "row-dividers.scad"; Out = "row-dividers.stl" },
+  @{ Scad = "outer-dowels.scad"; Out = "outer-dowels.stl" },
+  @{ Scad = "inner-dowels.scad"; Out = "inner-dowels.stl" },
+  @{ Scad = "mortar-tubes.scad"; Out = "mortar-tubes.stl" },
   @{ Scad = "end-wall.scad"; Out = "end-wall.stl" },
   @{ Scad = "column-board.scad"; Out = "column-board.stl" },
   @{ Scad = "mid-row-divider.scad"; Out = "mid-row-divider.stl" },

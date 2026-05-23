@@ -30,11 +30,8 @@ function layout_half_span_in() =
       + wall_thickness_in / 2
   );
 
-function end_wall_w_in() =
-  x_divider_center_x(num_rows) - x_divider_center_x(0) + wall_thickness_in
-    + 2 * end_wall_extension_in;
-function end_wall_x0() =
-  x_divider_center_x(0) - wall_thickness_in / 2 - end_wall_extension_in;
+function end_wall_w_in() = row_board_span_in;
+function end_wall_x0() = rack_center_x() - row_board_span_in / 2;
 function end_wall_height_in() = wall_height_in;
 
 function tube_center_y(col_i) =
@@ -66,6 +63,7 @@ function row_board_middle_x0() = end_wall_x0();
 
 function footprint_w_in() = max(
   divider_inner_right_x() - divider_inner_left_x(),
+  end_wall_w_in(),
   2 * (layout_half_span_in() + tilt_pad_x_in)
 );
 

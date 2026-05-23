@@ -40,7 +40,7 @@
     "notes": "Outer row ±12° from vertical. Inner rows ±6°. Same angles on both racks."
   },
   "structure": {
-    "walls": "1/2 in. thick — 2 brown ends + 6 green dividers + 4 blue mid rows per rack; 4 top dowels (2× 2 in. + 2× 1.5 in. OD)",
+    "walls": "1/2 in. thick — 2 outside row boards + 6 column dividers + 4 row dividers per rack; 4 top dowels (2× 2 in. + 2× 1.5 in. OD)",
     "board_thickness_in": 0.5,
     "wall_thickness_in": 0.5,
     "wall_height_in": 3.5,
@@ -50,9 +50,14 @@
     "grid_w_in": 14.875,
     "grid_d_in": 14.875,
     "tilt_pad_x_in": 2.74,
-    "footprint_w_in": 20.365,
+    "footprint_w_in": 24,
     "footprint_d_in": 14.875,
     "material": "1/2 in. wall boards + dowel rod",
     "cad": "design/finale-mortar-rack/rack.scad"
+  },
+  "preview3d": {
+    "label": "Drag to rotate · colors match BOM",
+    "rotation": [0, 35, 0],
+    "fallbackUrl": "design/finale-mortar-rack/stl/rack-assembly.stl"
   }
 }

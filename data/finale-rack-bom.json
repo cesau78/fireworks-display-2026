@@ -3,46 +3,46 @@
   "title": "Finale Mortar Rack — Bill of Materials",
   "per_unit": "One rack (5 rows × 5 tubes = 25 tubes). Build 2 identical racks for the full finale.",
   "rack_qty": 2,
-  "material": "1/2 in. wall boards + hardwood dowel rod (see cut list)",
+  "material": "1/2 in. wall boards + dowel rod (see cut list)",
   "standard_stock": [
     {
-      "name": "4×8 sheet (1/2 in.)",
-      "width_in": 48,
+      "name": "2×4×8 ft",
+      "width_in": 3.5,
       "length_in": 96,
-      "qty": 1,
-      "notes": "Brown + green + blue walls for both racks on one sheet (~12 sq ft of parts)"
+      "qty": 3,
+      "notes": "Rip to 1/2 in. thick wall stock; yields all 24 boards for both racks (4 outside row + 12 column + 8 row dividers)"
     },
     {
       "name": "2 in. dowel rod",
       "width_in": 2,
       "length_in": 72,
       "qty": 1,
-      "notes": "≥6 ft; four cuts × 18 in. (middle dowels, both racks)"
+      "notes": "18 in. × 4 cuts = 6 ft total (outer dowels, both racks)"
     },
     {
       "name": "1-1/2 in. dowel rod",
       "width_in": 1.5,
       "length_in": 72,
       "qty": 1,
-      "notes": "≥6 ft; four cuts × 18 in. (inner dowels, both racks)"
+      "notes": "18 in. × 4 cuts = 6 ft total (inner dowels, both racks)"
     }
   ],
   "parts": [
     {
       "id": "wall-end",
-      "name": "End wall (front & back)",
+      "name": "Outside Row Board",
       "layer": "brown",
       "qty": 2,
       "qty_total_two_racks": 4,
-      "cut_w_in": 23.375,
+      "cut_w_in": 24,
       "cut_h_in": 3.5,
       "thickness_in": 0.5,
-      "notes": "row-board-bottom.scad — top-half lap at six column X.",
-      "color": "#E59E61"
+      "notes": "row-board-bottom.scad — 24 in. centered on rack X; top-half lap at six column X.",
+      "color": "#DC2626"
     },
     {
       "id": "column-board-x",
-      "name": "Green divider (+X)",
+      "name": "Column Divider",
       "layer": "green",
       "qty": 6,
       "qty_total_two_racks": 12,
@@ -50,24 +50,23 @@
       "cut_h_in": 3.5,
       "thickness_in": 0.5,
       "notes": "column-board-bottom.scad — bottom lap at brown; upper lap at blue mid rows.",
-      "color": "#94B86B"
+      "color": "#F0F0F0"
     },
     {
       "id": "middle-row-divider",
-      "name": "Mid row divider (between tube rows)",
+      "name": "Row Divider",
       "layer": "blue",
       "qty": 4,
       "qty_total_two_racks": 8,
-      "cut_w_in": 23.375,
+      "cut_w_in": 24,
       "cut_h_in": 3.5,
       "thickness_in": 0.5,
-      "notes": "row-board-middle.scad — bottom edge z = 1-3/4 in.; bottom-half lap at columns.",
-      "color": "#7388D9"
+      "notes": "row-board-middle.scad — 24 in. centered on rack X; bottom edge z = 1-3/4 in.; bottom-half lap at columns.",
+      "color": "#3B82F6"
     },
     {
       "id": "dowel-row-top-middle",
-      "name": "Dowel — top middle (±6 in. X)",
-      "stock": "dowel rod",
+      "name": "Outer Dowel",
       "layer": "dowel",
       "qty": 2,
       "qty_total_two_racks": 4,
@@ -78,8 +77,7 @@
     },
     {
       "id": "dowel-row-top-inner",
-      "name": "Dowel — top inner (±2 in. X)",
-      "stock": "dowel rod",
+      "name": "Inner Dowel",
       "layer": "dowel",
       "qty": 2,
       "qty_total_two_racks": 4,
@@ -90,14 +88,13 @@
     },
     {
       "id": "tube-mortar",
-      "name": "Mortar tube (HDPE)",
-      "stock": "inventory",
+      "name": "Mortar Tube",
       "qty": 25,
       "qty_total_two_racks": 50,
       "od_in": 2.375,
       "length_in": 12,
       "notes": "2-3/8 in. OD × 12 in.; tilt per row angle when loaded.",
-      "color": "#3B82C4"
+      "color": "#C4A06A"
     }
   ],
   "summary": {
@@ -112,14 +109,14 @@
     "wall_sheet_area_sqft_two_racks": 12,
     "sheet_utilization_pct": 38,
     "shell_cues": "47–96",
-    "footprint_w_in": 20.365,
+    "footprint_w_in": 24,
     "footprint_d_in": 14.875
   },
   "building_two_racks": {
     "overview": "Cut and notch all wall boards for both racks in one session, then assemble two identical frames. Load 25 tubes per rack on site.",
     "steps": [
       "Print or open this BOM and preview rack.scad in OpenSCAD.",
-      "From one 4×8 sheet, cut 4 brown, 12 green, and 8 blue blanks (sizes in parts table).",
+      "From three 2×4×8 ft studs (ripped to 1/2 in.), cut 4 outside row, 12 column, and 8 row divider blanks (sizes in parts table).",
       "Notch all green columns, then brown ends, then blue mid rows (see README half-lap table).",
       "Cut dowels: 4× 2 in. OD and 4× 1.5 in. OD, each 18 in. long.",
       "Assemble rack A: columns → blue mid rows → brown ends → fasten → insert dowels → 25 tubes.",
@@ -128,12 +125,12 @@
     ]
   },
   "cut_layout": {
-    "wall_sheet": "One 4×8 — all wall boards for 2 racks",
-    "dowel_stock": "One 6 ft (or longer) stick each of 2 in. and 1-1/2 in. dowel",
+    "wall_stock": "Three 2×4×8 ft — rip to 1/2 in.; all wall boards for 2 racks",
+    "dowel_stock": "2 in. rod: 18 in. × 4 = 6 ft · 1-1/2 in. rod: 18 in. × 4 = 6 ft (both racks)",
     "tips": [
       "Each rack is 5×5 (25 tubes); build two racks for the 50-tube Commander finale.",
-      "Green boards are 18 in. long (depth); brown and blue span 23-3/8 in. (width).",
-      "Middle dowels (2 in.) at ±6 in. X; inner dowels (1.5 in.) at ±2 in. X.",
+      "Green boards are 18 in. long (depth); brown and blue span 24 in. (width), centered on rack.",
+      "Outer dowels (2 in.) at ±6 in. X; inner dowels (1.5 in.) at ±2 in. X.",
       "Label racks A/B before loading tubes if shell-to-position mapping differs.",
       "OpenSCAD models one rack; double every cut qty for two racks.",
       "Print design/finale-mortar-rack/blueprint.svg for four-view plan, elevations, and assembly."

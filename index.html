@@ -130,35 +130,57 @@
       gap: 1rem;
     }
 
-    .rack-diagrams {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    .rack-stl-host {
+      margin-bottom: 0.5rem;
     }
 
-    @media (max-width: 720px) {
-      .rack-diagrams { grid-template-columns: 1fr; }
-    }
-
-    .rack-diagram {
+    .rack-stl-viewer {
       background: #0f1219;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 0.75rem;
+      overflow: hidden;
     }
 
-    .rack-diagram h4 {
-      margin: 0 0 0.5rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    .rack-stl-canvas {
+      position: relative;
+      height: min(52vw, 320px);
+      min-height: 240px;
     }
 
-    .rack-diagram svg {
-      width: 100%;
-      height: auto;
+    .rack-stl-canvas canvas {
       display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    .rack-stl-canvas canvas:active {
+      cursor: grabbing;
+    }
+
+    .rack-stl-status {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .rack-stl-status--error {
+      color: #fca5a5;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .rack-stl-caption {
+      padding: 0.5rem 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
     }
 
     .rack-spec-table {
@@ -179,18 +201,85 @@
       font-size: 0.9rem;
     }
 
-    .rack-bom .bom-stock {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin: 0 0 0.75rem;
-    }
-
     .rack-color-legend {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem 1rem;
       margin: 0 0 0.75rem;
       font-size: 0.8rem;
+    }
+
+    .rack-bom-part-cell {
+      padding: 0;
+      vertical-align: top;
+    }
+
+    .rack-bom-disclosure {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rack-bom-disclosure:last-child {
+      border-bottom: none;
+    }
+
+    .rack-bom-summary {
+      display: grid;
+      grid-template-columns: 1rem minmax(0, 2fr) minmax(4rem, 1fr) minmax(0, 1.6fr);
+      gap: 0.5rem 0.75rem;
+      align-items: center;
+      padding: 0.5rem 0.65rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .rack-bom-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .rack-bom-chevron {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(-45deg);
+      justify-self: center;
+      transition: transform 0.15s ease;
+    }
+
+    .rack-bom-disclosure[open] .rack-bom-chevron {
+      transform: rotate(45deg);
+    }
+
+    .rack-bom-summary:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .rack-bom-summary-part {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    .rack-bom-summary-qty {
+      color: var(--text);
+    }
+
+    .rack-bom-summary-cut {
+      min-width: 0;
+    }
+
+    .rack-bom-diagram {
+      padding: 0.35rem 0.65rem 0.85rem;
+      background: #0a0c10;
+      border-top: 1px solid var(--border);
+    }
+
+    .rack-face-svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
     }
 
     .rack-color-legend span {
@@ -228,47 +317,6 @@
       height: 420px;
       width: 100%;
       background: #1a1f2e;
-    }
-
-    .lines-panel {
-      padding: 0.75rem 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-    }
-
-    .lines-panel h3 {
-      margin: 0 0 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .lines-panel ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .lines-panel li {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .lines-panel li:last-child { border-bottom: none; }
-
-    .lines-panel .line-swatch {
-      width: 20px;
-      height: 4px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    .lines-panel .line-meta { flex: 1; color: var(--muted); }
-
-    .lines-panel button.line-delete {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.45rem;
     }
 
     .zone-legend {
@@ -613,16 +661,6 @@
       color: var(--text);
     }
 
-    .schema-hint {
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      background: var(--surface-2);
-    }
-
-    .schema-hint strong { color: var(--text); }
-
     .status {
       padding: 1rem 1.5rem;
       margin: 1rem 1.5rem 0;
@@ -674,19 +712,10 @@
         <div class="map-wrap">
           <div id="map" role="application" aria-label="Field map with zones and fuse path"></div>
         </div>
-        <div class="lines-panel" id="lines-panel" hidden>
-          <h3>Lines on map</h3>
-          <ul id="lines-list"></ul>
-        </div>
         <div class="zone-legend" id="zone-legend"></div>
         <div id="zone-coords" class="zone-coords-panel" aria-label="Zone details (expand to view)"></div>
         <div class="links-row" id="zone-links"></div>
       </div>
-      <p class="schema-hint">
-        <strong>Source:</strong> <code>data/zone.json</code> —
-        <code>zones</code> array — each entry has <code>id</code>, <code>role</code> (<code>deployment</code> | <code>dmz</code> | <code>bonfire</code> | <code>dryer</code> | <code>crowd</code>), bounds, and vertices.
-        Edit <code>data/lines.json</code> for paths (<code>points</code>: <code>{lat,lng}</code> arrays).
-      </p>
     </section>
 
     <section id="placement">
@@ -699,10 +728,6 @@
         </div>
         <div id="placement-racks-wrap" class="placement-racks" hidden></div>
       </div>
-      <p class="schema-hint">
-        <strong>Source:</strong> <code>data/firing-sequence.csv</code> on the horseshoe diagram (all cues).
-        Optional racks in <code>data/placement.json</code>.
-      </p>
     </section>
 
     <section id="finale-rack">
@@ -711,12 +736,6 @@
       <div class="card">
         <div id="finale-rack-wrap" class="rack-design"></div>
       </div>
-      <p class="schema-hint">
-        <strong>Source:</strong> <code>data/finale-rack.json</code> · BOM:
-        <code>data/finale-rack-bom.json</code> · Blueprint:
-        <code>design/finale-mortar-rack/blueprint.svg</code> · OpenSCAD:
-        <code>design/finale-mortar-rack/rack.scad</code>
-      </p>
     </section>
 
     <section id="sequence">
@@ -725,10 +744,6 @@
       <div class="card">
         <div id="sequence-table-wrap"></div>
       </div>
-      <p class="schema-hint">
-        <strong>Source:</strong> <code>data/firing-sequence.csv</code> —
-        fuse placement at <code>(start − show start) ÷ 12</code> seconds per foot along the 300 ft path.
-      </p>
     </section>
   </main>
 
@@ -742,6 +757,14 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
   <script>
     const DATA_BASE = "data";
     const LINES_STORAGE_KEY = "fireworks-display-2026-lines";
@@ -1276,42 +1299,6 @@
       renderFuseSummaryMarkers();
     }
 
-    function updateLinesPanel() {
-      const lines = allLines();
-      const panel = document.getElementById("lines-panel");
-      const list = document.getElementById("lines-list");
-      if (lines.length === 0) {
-        panel.hidden = true;
-        return;
-      }
-      panel.hidden = false;
-      list.innerHTML = lines
-        .map((line) => {
-          const isLocal = line._local;
-          const label = escapeHtml(line.label || line.id || "Line");
-          const color = line.color || DEFAULT_LINE_COLOR;
-          const pts = (line.points || []).length;
-          const deleteBtn = isLocal
-            ? `<button type="button" class="line-delete" data-local-id="${escapeHtml(line.id)}">Remove</button>`
-            : `<span class="line-meta">in repo</span>`;
-          return `<li>
-            <span class="line-swatch" style="background:${color}"></span>
-            <span class="line-meta"><strong>${label}</strong> · ${pts} pts</span>
-            ${deleteBtn}
-          </li>`;
-        })
-        .join("");
-      list.querySelectorAll(".line-delete").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const id = btn.getAttribute("data-local-id");
-          localLines = localLines.filter((l) => l.id !== id);
-          saveLocalLines();
-          renderLinesOnMap();
-          updateLinesPanel();
-        });
-      });
-    }
-
     const METERS_PER_DEG_LAT = 111320;
     const FEET_PER_METER = 3.28084;
 
@@ -1644,7 +1631,6 @@
       mapLinesLayer = L.featureGroup().addTo(fieldMap);
       firingMarkersLayer = L.featureGroup().addTo(fieldMap);
       renderLinesOnMap();
-      updateLinesPanel();
     }
 
     function formatInches(n) {
@@ -1673,17 +1659,24 @@
         return `${formatInches(p.cut_l_in)}" long × ${p.profile_in || "1/2 × 1/2"} in.`;
       }
       const w = p.cut_w_in != null ? formatInches(p.cut_w_in) : "—";
-      const d = p.cut_d_in != null ? formatInches(p.cut_d_in) : p.cut_h_in != null ? formatInches(p.cut_h_in) : "—";
-      return `${w}" × ${d}"`;
+      const h =
+        p.cut_h_in != null
+          ? formatInches(p.cut_h_in)
+          : p.cut_d_in != null
+            ? formatInches(p.cut_d_in)
+            : "—";
+      const depth =
+        p.thickness_in != null
+          ? formatInches(p.thickness_in)
+          : p.cut_w_in != null || p.cut_h_in != null
+            ? "1/2"
+            : null;
+      return depth ? `${w}" × ${h}" × ${depth}"` : `${w}" × ${h}"`;
     }
 
-    function renderFinaleRackBom(bom, spec) {
+    async function renderFinaleRackBom(bom) {
       if (!bom || !bom.parts) return "";
-      const rackN = bom.rack_qty || spec?.rack_count || 2;
-      const stock = (bom.standard_stock || [])
-        .filter((s) => s.qty > 0)
-        .map((s) => `<strong>${s.qty}×</strong> ${escapeHtml(s.name)}`)
-        .join(" · ");
+      const { faceDiagramForPart } = await import("./js/finale-rack-face-diagrams.js");
       const colorLegend = bom.parts
         .filter((p) => p.color)
         .map(
@@ -1691,36 +1684,54 @@
             `<span><i style="background:${p.color}"></i>${escapeHtml(p.name)}</span>`
         )
         .join("");
+      const partSwatch = (p) =>
+        p.color
+          ? `<i style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${p.color};flex-shrink:0;border:1px solid rgba(255,255,255,0.2)"></i>`
+          : "";
+      const partQty = (p) =>
+        `${p.qty}${p.qty_total_two_racks ? ` <span style="color:var(--muted)">(${p.qty_total_two_racks} both)</span>` : ""}`;
       const partRows = bom.parts
-        .map(
-          (p) => `<tr>
-            <td>${p.color ? `<i style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${p.color};vertical-align:middle;margin-right:0.35rem;border:1px solid rgba(255,255,255,0.2)"></i>` : ""}${p.qty}${p.qty_total_two_racks ? ` <span style="color:var(--muted)">(${p.qty_total_two_racks} both)</span>` : ""}</td>
-            <td>${escapeHtml(p.name)}${p.stock ? ` <span style="color:var(--muted)">(${escapeHtml(p.stock)})</span>` : ""}</td>
-            <td><code>${partCutLabel(p)}</code></td>
-            <td>${escapeHtml(p.layer ? `Layer ${p.layer}` : p.notes?.slice(0, 48) || "—")}</td>
-          </tr>`
-        )
+        .map((p) => {
+          const face = faceDiagramForPart(p);
+          const nameHtml = `${partSwatch(p)}${escapeHtml(p.name)}`;
+          const qtyHtml = partQty(p);
+          const cutHtml = `<code>${partCutLabel(p)}</code>`;
+          if (!face) {
+            return `<tr>
+              <td>${nameHtml}</td>
+              <td>${qtyHtml}</td>
+              <td>${cutHtml}</td>
+            </tr>`;
+          }
+          return `<tr class="rack-bom-part-row">
+            <td colspan="3" class="rack-bom-part-cell">
+              <details class="rack-bom-disclosure">
+                <summary class="rack-bom-summary">
+                  <span class="rack-bom-chevron" aria-hidden="true"></span>
+                  <span class="rack-bom-summary-part">${nameHtml}</span>
+                  <span class="rack-bom-summary-qty">${qtyHtml}</span>
+                  <span class="rack-bom-summary-cut">${cutHtml}</span>
+                </summary>
+                <div class="rack-bom-diagram" role="region" aria-label="${escapeHtml(p.name)} cut diagram">${face}</div>
+              </details>
+            </td>
+          </tr>`;
+        })
         .join("");
-      const tips = (bom.cut_layout?.tips || [])
-        .map((t) => `<li>${escapeHtml(t)}</li>`)
-        .join("");
-      const sum = bom.summary || {};
       return `
         <div class="rack-bom">
           <h4>Bill of materials</h4>
-          <p class="bom-stock">${escapeHtml(bom.per_unit || "Per rack")} · Build <strong>${rackN}</strong> racks · ${stock || "See cut list"} · ${escapeHtml(bom.material || "")}</p>
           ${colorLegend ? `<div class="rack-color-legend" aria-label="Board colors in OpenSCAD model">${colorLegend}</div>` : ""}
           <table class="rack-spec-table">
             <thead>
-              <tr><th>Qty</th><th>Part</th><th>Cut size</th><th>Notes</th></tr>
+              <tr><th>Part</th><th>Qty</th><th>Cut size</th></tr>
             </thead>
             <tbody>${partRows}</tbody>
           </table>
-          ${tips ? `<ul style="margin:0.5rem 0 0;padding-left:1.2rem;font-size:0.8rem;color:var(--muted)">${tips}</ul>` : ""}
         </div>`;
     }
 
-    function renderFinaleRack(spec, bom) {
+    async function renderFinaleRack(spec, bom) {
       const wrap = document.getElementById("finale-rack-wrap");
       const desc = document.getElementById("finale-rack-description");
       if (!spec || !spec.angles) {
@@ -1730,102 +1741,41 @@
       }
 
       const outer = spec.angles.outer_from_vertical_deg;
-      const rows = spec.angles.rows || [];
       const layout = spec.layout || {};
-      const tube = spec.tube || {};
-
       const perRack = layout.tubes_per_rack || layout.rows * layout.tubes_per_row || 25;
       const rackN = spec.rack_count || 2;
       desc.textContent =
         spec.description ||
         `${perRack} tubes/rack (${layout.rows || 5}×${layout.tubes_per_row || 5}) · build ${rackN} racks (${layout.total_tubes || perRack * rackN} total) · fan ±${outer}°`;
 
-      const rowRows = rows
-        .map(
-          (r) => `<tr>
-            <td>${escapeHtml(String(r.index))}</td>
-            <td>${escapeHtml(r.label)}</td>
-            <td><code>${r.from_vertical_deg > 0 ? "+" : ""}${r.from_vertical_deg}°</code></td>
-            <td>${escapeHtml(r.tilt)}</td>
-          </tr>`
-        )
-        .join("");
-
-      const svgW = 280;
-      const svgH = 200;
-      const cx = svgW / 2;
-      const baseY = svgH - 28;
-      const tubeLen = 72;
-
-      const endViewTubes = rows
-        .map((r, i) => {
-          const x = cx + (i - (rows.length - 1) / 2) * 36;
-          const a = (r.from_vertical_deg * Math.PI) / 180;
-          const dx = Math.sin(a) * tubeLen;
-          const dy = -Math.cos(a) * tubeLen;
-          const stroke = r.from_vertical_deg === 0 ? "#86efac" : "#60a5fa";
-          return `<line x1="${x}" y1="${baseY}" x2="${(x + dx).toFixed(1)}" y2="${(baseY + dy).toFixed(1)}" stroke="${stroke}" stroke-width="6" stroke-linecap="round"/>`;
-        })
-        .join("");
-
-      const topRows = layout.rows || 5;
-      const topCols = layout.tubes_per_row || 5;
-      const gridW = 240;
-      const gridH = 100;
-      const cellW = gridW / (topCols + 1);
-      const cellH = gridH / (topRows + 1);
-      const topDots = [];
-      for (let r = 0; r < topRows; r++) {
-        for (let c = 0; c < topCols; c++) {
-          const px = cellW * (r + 1);
-          const py = cellH * (c + 1);
-          const rowSpec = rows[r];
-          const fill = rowSpec && rowSpec.from_vertical_deg === 0 ? "#86efac" : "#60a5fa";
-          topDots.push(
-            `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="${fill}" stroke="#fff" stroke-width="1"/>`
-          );
-        }
-      }
+      const previewRotation = spec.preview3d?.rotation || [0, 35, 0];
+      const previewLabel =
+        spec.preview3d?.label ||
+        "Drag to rotate · colors match BOM";
 
       wrap.innerHTML = `
-        <div class="rack-diagrams">
-          <div class="rack-diagram">
-            <h4>Front view (crowd) — rotate about Y</h4>
-            <svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" aria-label="Rack front view, Y-axis rotation">
-              <line x1="20" y1="${baseY}" x2="${svgW - 20}" y2="${baseY}" stroke="#475569" stroke-width="2"/>
-              ${endViewTubes}
-              <text x="${cx}" y="16" fill="#93c5fd" font-size="11" text-anchor="middle">XZ fan · Y axis · ±${outer}°</text>
-            </svg>
-          </div>
-          <div class="rack-diagram">
-            <h4>Top view — ${topRows} rows × ${topCols} tubes (X × Y)</h4>
-            <svg viewBox="0 0 ${gridW} ${gridH}" xmlns="http://www.w3.org/2000/svg" aria-label="Rack top view">
-              ${topDots.join("")}
-              <text x="8" y="${gridH / 2}" fill="#64748b" font-size="9" transform="rotate(-90 8 ${gridH / 2})">+Y depth</text>
-              <text x="${gridW / 2}" y="${gridH - 4}" fill="#64748b" font-size="10" text-anchor="middle">+X rows (fan)</text>
-            </svg>
-          </div>
-        </div>
-        <table class="rack-spec-table">
-          <thead>
-            <tr><th>Row</th><th>Label</th><th>Angle</th><th>Tilt</th></tr>
-          </thead>
-          <tbody>${rowRows}</tbody>
-        </table>
-        <table class="rack-spec-table">
-          <tbody>
-            <tr><th scope="row">Tube</th><td><code>${tube.od_in}"</code> OD × <code>${tube.length_in}"</code> long</td></tr>
-            <tr><th scope="row">Shell</th><td>Class C <code>${spec.shell?.nominal_in || 2}"</code> mortars</td></tr>
-            <tr><th scope="row">Spacing</th><td><code>${layout.row_spacing_in}"</code> between rows (+X) · <code>${layout.row_depth_in}"</code> along row (+Y)</td></tr>
-            <tr><th scope="row">Rotation</th><td>About <strong>Y</strong> (tilt in XZ, left–right fan)</td></tr>
-            <tr><th scope="row">Walls</th><td>1/2 in. thick · <code>${spec.structure?.wall_height_in || 3.5}"</code> tall · 2 brown + 6 green + 4 blue per rack</td></tr>
-            <tr><th scope="row">Dowels</th><td><code>${spec.structure?.dowel_middle_od_in ?? 2}"</code> OD (middle) · <code>${spec.structure?.dowel_inner_od_in ?? 1.5}"</code> OD (inner) × <code>${formatInches(spec.structure?.dowel_length_in ?? 18)}"</code> long · 4 per rack</td></tr>
-            <tr><th scope="row">Cell opening</th><td><code>${layout.cell_opening_in || (layout.row_spacing_in - 0.5)}"</code> clear (tube + divider + gap)</td></tr>
-            <tr><th scope="row">Footprint</th><td><code>${spec.structure?.footprint_w_in ?? "—"}</code> × <code>${spec.structure?.footprint_d_in ?? "—"}</code> in. inner · <code>${spec.structure?.outer_w_in ?? "—"}</code> × <code>${spec.structure?.outer_d_in ?? "—"}</code> in. with walls</td></tr>
-            <tr><th scope="row">Spread</th><td><code>${spec.angles.total_spread_deg}°</code> total</td></tr>
-          </tbody>
-        </table>
-        ${renderFinaleRackBom(bom, spec)}`;
+        <div id="finale-rack-stl-host" class="rack-stl-host" aria-label="Finale rack 3D preview"></div>
+        ${await renderFinaleRackBom(bom)}`;
+
+      const stlHost = document.getElementById("finale-rack-stl-host");
+      if (stlHost) {
+        import("./js/finale-rack-stl-viewer.js")
+          .then(({ mountFinaleRackViewer, previewPartsFromBom }) => {
+            const parts = previewPartsFromBom(bom);
+            mountFinaleRackViewer(stlHost, {
+              parts: parts.length ? parts : undefined,
+              url: parts.length
+                ? undefined
+                : spec.preview3d?.url ||
+                  "design/finale-mortar-rack/stl/rack-assembly.stl",
+              label: previewLabel,
+              rotation: previewRotation,
+            });
+          })
+          .catch((err) => {
+            stlHost.innerHTML = `<p class="rack-stl-status rack-stl-status--error">3D viewer failed to load (${escapeHtml(err.message)})</p>`;
+          });
+      }
     }
 
     function renderPlacement(placement, zoneData) {
@@ -1944,7 +1894,7 @@
         firingSequenceRows = parseCsv(csvText);
         renderZones(zone);
         renderPlacement(placement, zone);
-        renderFinaleRack(finaleRack, finaleBom);
+        await renderFinaleRack(finaleRack, finaleBom);
         renderSequence();
 
         document.getElementById("updated").textContent =

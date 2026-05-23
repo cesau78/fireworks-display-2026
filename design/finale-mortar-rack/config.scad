@@ -45,7 +45,7 @@ end_wall_inner_offset_from_center_y = [
 ];
 
 green_board_length_in = 18; // green dividers + dowels along +Y; centered on rack Y (layout column_board_y0)
-end_wall_extension_in = 1; // brown ends: +1 in. per side in X (panel plane)
+row_board_span_in = 24; // outside row boards + row dividers along +X; centered on rack; notches at columns unchanged (+2-5/8 in. each end vs prior 1 in. extension)
 column_end_half_lap = true; // half-lap: columns lose bottom half, rows lose top half
 middle_row_half_lap = true; // mid-height row dividers: bottom half out; columns lose top of upper half
 
@@ -89,12 +89,12 @@ tilt_pad_x_in = tube_length_in * sin(outer_angle_deg) + tube_gap_in;
 wall_thickness_in = 0.5;
 wall_height_in = 3.5; // row boards + column boards (same height)
 
-color_wall_end = [0.90, 0.62, 0.38];
-color_wall_side = [0.58, 0.72, 0.42];
-color_middle_row = [0.45, 0.55, 0.85];
+color_wall_end = [0.863, 0.149, 0.149]; // outside row board — red (#DC2626)
+color_wall_side = [0.941, 0.941, 0.941]; // column divider — white (#F0F0F0)
+color_middle_row = [0.231, 0.510, 0.965]; // row divider — blue (#3B82F6)
 color_dowel_middle = [0.85, 0.75, 0.35];
 color_dowel_standard = [0.75, 0.55, 0.25];
-color_tube = [0.25, 0.45, 0.85, 0.85];
+color_tube = [0.769, 0.627, 0.416, 0.85]; // cardboard brown (#C4A06A)
 
 // --- Preview ---
 preview = true;
