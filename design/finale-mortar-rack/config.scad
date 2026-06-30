@@ -9,7 +9,7 @@ shell_nominal_in = 2; // Class C 2 in. mortars
 num_rows = 5;
 tubes_per_row = 5; // 5×5 per rack × 2 racks = 50 tubes (Commander finale)
 num_dividers_x = num_rows + 1; // 6 green boards: left side + 4 between columns + right side
-board_thickness_in = 0.5;
+board_thickness_in = 0.625;
 tube_gap_in = 0.25; // extra clearance inside each cell
 row_spacing_in = tube_od_in + board_thickness_in + tube_gap_in;
 row_depth_in = tube_od_in + board_thickness_in + tube_gap_in;
@@ -25,23 +25,23 @@ column_tube_offset_from_center_in = [
 divider_offset_from_center_in = [
   -9,     // 0 left side (outer)
   -5,     // 1 outer left | middle left
-  -1.5,   // 2 middle left | center
-  1.5,    // 3 center | middle right
+  -1.5625, // 2 middle left | center (+1/16 each vs 1/2 in. boards — keeps 2-1/2 in. center slot)
+  1.5625,  // 3 center | middle right
   5,      // 4 middle right | outer right
   9,      // 5 right side (outer)
 ];
 
 // --- Depth layout (+Y = toward back, from rack center) ---
 depth_tube_offset_from_center_in = [
-  -6.25, // 0 front
-  -3.125,
-  0,     // 2 center
-  3.125,
-  6.25,  // 4 back
+  -6.5, // 0 front
+  -3.25,
+  0,    // 2 center
+  3.25,
+  6.5,  // 4 back
 ];
 end_wall_inner_offset_from_center_y = [
-  -7.438, // front inner face
-  7.438,  // back inner face
+  -7.6875, // front inner face
+  7.6875,  // back inner face
 ];
 
 green_board_length_in = 18; // green dividers + dowels along +Y; centered on rack Y (layout column_board_y0)
@@ -85,8 +85,8 @@ function row_angle_deg(i) =
 
 tilt_pad_x_in = tube_length_in * sin(outer_angle_deg) + tube_gap_in;
 
-// --- Structure (1/2 in. wall boards) ---
-wall_thickness_in = 0.5;
+// --- Structure (5/8 in. wall boards) ---
+wall_thickness_in = 0.625;
 wall_height_in = 3.5; // row boards + column boards (same height)
 
 color_wall_end = [0.863, 0.149, 0.149]; // outside row board — red (#DC2626)

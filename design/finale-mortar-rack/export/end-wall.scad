@@ -1,4 +1,4 @@
-// Single brown end wall blank (24 x 3-1/2 x 1/2 in.).
+// Single brown end wall blank (24 x 3-1/2 x 5/8 in.).
 $fn = 48;
 preview = false;
 include <../config.scad>

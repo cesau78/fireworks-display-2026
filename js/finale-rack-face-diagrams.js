@@ -4,15 +4,15 @@
  */
 
 const WALL = {
-  thick: 0.5,
+  thick: 0.625,
   height: 3.5,
   lap: 1.75,
-  dividerX: [-9, -5, -1.5, 1.5, 5, 9],
+  dividerX: [-9, -5, -1.5625, 1.5625, 5, 9],
   rowBoardSpan: 24,
   columnLen: 18,
   columnY0: -9,
-  endInnerFrontY: -7.438,
-  endInnerBackY: 7.438,
+  endInnerFrontY: -7.6875,
+  endInnerBackY: 7.6875,
 };
 
 function rowBoardX0(wIn) {

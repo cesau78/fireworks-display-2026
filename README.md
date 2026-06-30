@@ -45,4 +45,4 @@ npx --yes serve .
 
 **Maps:** Field map shows 5-minute summary dots on the fuse path; **Placement** section has a horseshoe schematic with every cue (click for details).
 
-**Finale rack:** **5×5 tubes per rack** (25), build **2 racks** for 50 Commander shells (47–96). 1/2 in. wall frame + top dowels (2 in. / 1.5 in. OD). See `design/finale-mortar-rack/README.md` (build guide) and `BOM.md`.
+**Finale rack:** **5×5 tubes per rack** (25), build **2 racks** for 50 Commander shells (47–96). 5/8 in. wall frame + top dowels (2 in. / 1.5 in. OD). See `design/finale-mortar-rack/README.md` (build guide) and `BOM.md`.

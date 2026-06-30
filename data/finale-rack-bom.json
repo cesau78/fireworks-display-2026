@@ -3,14 +3,14 @@
   "title": "Finale Mortar Rack — Bill of Materials",
   "per_unit": "One rack (5 rows × 5 tubes = 25 tubes). Build 2 identical racks for the full finale.",
   "rack_qty": 2,
-  "material": "1/2 in. wall boards + dowel rod (see cut list)",
+  "material": "5/8 in. wall boards + dowel rod (see cut list)",
   "standard_stock": [
     {
       "name": "2×4×8 ft",
       "width_in": 3.5,
       "length_in": 96,
       "qty": 3,
-      "notes": "Rip to 1/2 in. thick wall stock; yields all 24 boards for both racks (4 outside row + 12 column + 8 row dividers)"
+      "notes": "Rip to 5/8 in. thick wall stock; yields all 24 boards for both racks (4 outside row + 12 column + 8 row dividers)"
     },
     {
       "name": "2 in. dowel rod",
@@ -36,7 +36,7 @@
       "qty_total_two_racks": 4,
       "cut_w_in": 24,
       "cut_h_in": 3.5,
-      "thickness_in": 0.5,
+      "thickness_in": 0.625,
       "notes": "row-board-bottom.scad — 24 in. centered on rack X; top-half lap at six column X.",
       "color": "#DC2626"
     },
@@ -48,7 +48,7 @@
       "qty_total_two_racks": 12,
       "cut_w_in": 18,
       "cut_h_in": 3.5,
-      "thickness_in": 0.5,
+      "thickness_in": 0.625,
       "notes": "column-board-bottom.scad — bottom lap at brown; upper lap at blue mid rows.",
       "color": "#F0F0F0"
     },
@@ -60,7 +60,7 @@
       "qty_total_two_racks": 8,
       "cut_w_in": 24,
       "cut_h_in": 3.5,
-      "thickness_in": 0.5,
+      "thickness_in": 0.625,
       "notes": "row-board-middle.scad — 24 in. centered on rack X; bottom edge z = 1-3/4 in.; bottom-half lap at columns.",
       "color": "#3B82F6"
     },
@@ -110,13 +110,13 @@
     "sheet_utilization_pct": 38,
     "shell_cues": "47–96",
     "footprint_w_in": 24,
-    "footprint_d_in": 14.875
+    "footprint_d_in": 15.375
   },
   "building_two_racks": {
     "overview": "Cut and notch all wall boards for both racks in one session, then assemble two identical frames. Load 25 tubes per rack on site.",
     "steps": [
       "Print or open this BOM and preview rack.scad in OpenSCAD.",
-      "From three 2×4×8 ft studs (ripped to 1/2 in.), cut 4 outside row, 12 column, and 8 row divider blanks (sizes in parts table).",
+      "From three 2×4×8 ft studs (ripped to 5/8 in.), cut 4 outside row, 12 column, and 8 row divider blanks (sizes in parts table).",
       "Notch all green columns, then brown ends, then blue mid rows (see README half-lap table).",
       "Cut dowels: 4× 2 in. OD and 4× 1.5 in. OD, each 18 in. long.",
       "Assemble rack A: columns → blue mid rows → brown ends → fasten → insert dowels → 25 tubes.",
@@ -125,7 +125,7 @@
     ]
   },
   "cut_layout": {
-    "wall_stock": "Three 2×4×8 ft — rip to 1/2 in.; all wall boards for 2 racks",
+    "wall_stock": "Three 2×4×8 ft — rip to 5/8 in.; all wall boards for 2 racks",
     "dowel_stock": "2 in. rod: 18 in. × 4 = 6 ft · 1-1/2 in. rod: 18 in. × 4 = 6 ft (both racks)",
     "tips": [
       "Each rack is 5×5 (25 tubes); build two racks for the 50-tube Commander finale.",

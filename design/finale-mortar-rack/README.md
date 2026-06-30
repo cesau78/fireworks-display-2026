@@ -12,7 +12,7 @@ The show needs **two identical racks** (25 tubes each). OpenSCAD `rack.scad` pre
 
 | Material | Amount |
 |----------|--------|
-| 2×4×8 ft | **3 studs** — rip to 1/2 in.; 4 outside row + 12 column + 8 row divider boards |
+| 2×4×8 ft | **3 studs** — rip to 5/8 in.; 4 outside row + 12 column + 8 row divider boards |
 | 2 in. dowel rod | **6 ft total** — 18 in. × 4 (outer dowels, both racks) |
 | 1-1/2 in. dowel rod | **6 ft total** — 18 in. × 4 (inner dowels, both racks) |
 | Mortar tube (2-3/8 in. OD × 12 in.) | **50** (25 per rack) |
@@ -78,7 +78,7 @@ Total fan spread: **24°** (±12°). Adjust `outer_angle_deg` in `config.scad` (
 - **Tubes in each row** run front–back (**+Y**)  
 - **Tilt** is rotation about the **Y axis** (fan in the XZ plane), not about X  
 
-Row/column spacing: **3.125 in.** center-to-center (tube OD + 1/2 in. divider + 1/4 in. gap) → **2.625 in.** clear opening per cell  
+Row/column spacing: **3.25 in.** center-to-center (tube OD + 5/8 in. divider + 1/4 in. gap) → **2.625 in.** clear opening per cell  
 
 ### Column positions (`config.scad`)
 
@@ -98,7 +98,7 @@ Rack center is **X = 0**. Tune each column independently:
 
 Negative X = left; negative Y = front. Rack origin is **X = 0, Y = 0** (center column / center tube along depth). Footprint width spans divider `[0]`–`[5]` inner faces; brown ends wrap the outer faces of those two side dividers.
 
-Defaults restore the prior 2-1/2 in. center slot (`divider` 1 & 2 at ±1.5 in.) and middle L/R tubes bottom-flush to those boards.
+Defaults restore the prior 2-1/2 in. center slot (`divider` 2 & 3 at ±1-9/16 in.) and middle L/R tubes bottom-flush to those boards.
 
 All six column dividers share the same cut (**18 × 3-1/2 in.** via `green_board_length_in`); only X positions differ. Boards stay centered on rack **Y** (equal overhang past the brown end inner faces). Row and column boards are **3-1/2 in.** tall (`wall_height_in`). At crossings, **columns** lose the **bottom** half and **brown rows** lose the **top** half (`column_end_half_lap`).
 
@@ -157,9 +157,9 @@ One rack; build **two identical** units for 50 tubes. Brown = end row boards (fr
   o = tube (2-3/8 in. OD × 12 in.), tilted ±12° / ±6° / 0° by column
 ```
 
-**Divider centerlines X (in):** −9, −5, −1.5, +1.5, +5, +9  
+**Divider centerlines X (in):** −9, −5, −1-9/16, +1-9/16, +5, +9  
 **Tube centerlines X (in):** −6.5, −3, 0, +3, +6.5  
-**Tube centerlines Y per row (in):** −6.25, −3.125, 0, +3.125, +6.25  
+**Tube centerlines Y per row (in):** −6.5, −3-1/4, 0, +3-1/4, +6.5  
 
 ### Half-lap joint (section at front or back crossing)
 
@@ -182,9 +182,9 @@ Board height **3-1/2 in.** Lap depth **1-3/4 in.** (half height). Column boards 
 
 | Board | Notch location | Material removed |
 |-------|----------------|------------------|
-| Green column (×6) | Front & back brown crossings | **Bottom** 1-3/4 in. × 1/2 in. × board thickness |
-| Brown row (×2) | Each of six column X positions | **Top** 1-3/4 in. × 1/2 in. × board thickness |
-| Blue mid row (×4) | Each of six column X positions | **Bottom** 1-3/4 in. × 1/2 in. (half of 3-1/2 board) |
+| Green column (×6) | Front & back brown crossings | **Bottom** 1-3/4 in. × 5/8 in. × board thickness |
+| Brown row (×2) | Each of six column X positions | **Top** 1-3/4 in. × 5/8 in. × board thickness |
+| Blue mid row (×4) | Each of six column X positions | **Bottom** 1-3/4 in. × 5/8 in. (half of 3-1/2 board) |
 | Green column (×6) | Four blue row Y centerlines | **Top** 7/8 in. of upper band (z = 2-5/8 to 3-1/2) |
 
 **Mid-height crossing (side view):**
@@ -204,7 +204,7 @@ Board height **3-1/2 in.** Lap depth **1-3/4 in.** (half height). Column boards 
 3. **Notch brown rows** — top-half at all six column X (`row-board-bottom.scad`).
 4. **Notch blue rows** — bottom-half at all six column X (`row-board-middle.scad`).
 5. **Dry-fit** — six green columns → four blue mid rows → brown front/back.
-6. **Fasten** — screw or bolt through laps (pilot for 1/2 in. wall thickness); keep column/brown tops flush at **z = 0** for tube seating.
+6. **Fasten** — screw or bolt through laps (pilot for 5/8 in. wall thickness); keep column/brown tops flush at **z = 0** for tube seating.
 7. **Dowels** — outer (±6 in. X) then inner (±2 in. X); bottom **1 in.** above row divider tops.
 8. **Tubes** — insert 25 tubes; tilt columns per [row angles](#row-angles).
 9. **Second rack** — repeat steps 1–8; label **A** / **B** if needed.
@@ -237,7 +237,7 @@ flowchart LR
 | Part | Size |
 |------|------|
 | Outside row boards (front & back) | **24 × 3-1/2 in.** (`row_board_span_in`, centered on rack X) |
-| Column dividers (6 along +X) | 1/2 in. × **18 × 3-1/2 in.** |
+| Column dividers (6 along +X) | 5/8 in. × **18 × 3-1/2 in.** |
 | Row dividers (4 along Y) | **24 × 3-1/2 in.** (starts at z = 1-3/4) |
 | Outer dowel (2/rack) | **2 in.** OD × **18 in.** (`row-dowel-top-middle.scad`, ±6 in. X) |
 | Inner dowel (2/rack) | **1.5 in.** OD × **18 in.** (`row-dowel-top-inner.scad`, ±2 in. X) |
