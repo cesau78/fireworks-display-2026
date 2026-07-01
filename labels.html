@@ -104,44 +104,50 @@
       border: 1px dashed #ccc;
     }
 
-    .label-seq {
-      font-size: 22pt;
-      font-weight: 800;
+    .label-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.1in;
+      margin-bottom: 0.08in;
       line-height: 1;
-      margin-bottom: 0.06in;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .label-seq,
+    .label-distance {
+      font-size: 34pt;
+      font-weight: 800;
+    }
+
+    .label-distance {
+      text-align: right;
+      flex-shrink: 0;
     }
 
     .label-name {
-      font-size: 11pt;
+      font-size: 18pt;
       font-weight: 700;
       line-height: 1.15;
+      text-align: left;
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
+    .label-body {
+      width: 50%;
+      text-align: left;
+    }
+
     .label-piece {
-      font-size: 10pt;
+      font-size: 17pt;
       font-weight: 600;
       color: #333;
-      margin-top: 0.04in;
+      margin-top: 0.05in;
       line-height: 1.1;
-    }
-
-    .label-distance {
-      font-size: 14pt;
-      font-weight: 700;
-      margin-top: auto;
-      padding-top: 0.06in;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .label-distance span {
-      font-size: 9pt;
-      font-weight: 500;
-      color: #555;
-      margin-right: 0.08in;
+      text-align: left;
     }
 
     @media print {
@@ -260,24 +266,32 @@
     function labelPosition(index) {
       const col = index % COLS;
       const row = Math.floor(index / COLS) % ROWS;
-      const left = `calc(var(--margin-left) + ${col} * var(--pitch-x))`;
-      const top = `calc(var(--margin-top) + ${row} * var(--pitch-y))`;
+      const left = `${0.15625 + col * 4.25}in`;
+      const top = `${0.5 + row * 2}in`;
       return { left, top };
+    }
+
+    function formatPiece(piece) {
+      return String(piece).replace(/\//g, " of ");
     }
 
     function renderLabel({ row, distFt }) {
       const name = row.Item || row.Description || "—";
       const piece = row.Piece || "";
       const pieceHtml = piece
-        ? `<div class="label-piece">${escapeHtml(piece)}</div>`
+        ? `<div class="label-piece">${escapeHtml(formatPiece(piece))}</div>`
         : "";
 
       return (
         `<div class="label">` +
-        `<div class="label-seq">#${escapeHtml(String(row.Sequence))}</div>` +
+        `<div class="label-header">` +
+        `<span class="label-seq">#${escapeHtml(String(row.Sequence))}</span>` +
+        `<span class="label-distance">${escapeHtml(formatFuseFt(distFt))}</span>` +
+        `</div>` +
+        `<div class="label-body">` +
         `<div class="label-name">${escapeHtml(name)}</div>` +
         pieceHtml +
-        `<div class="label-distance"><span>Fuse</span>${escapeHtml(formatFuseFt(distFt))}</div>` +
+        `</div>` +
         `</div>`
       );
     }
@@ -305,10 +319,11 @@
         chunk.forEach((placement, i) => {
           const pos = labelPosition(i);
           const wrap = document.createElement("div");
-          wrap.style.left = pos.left;
-          wrap.style.top = pos.top;
           wrap.innerHTML = renderLabel(placement);
-          sheet.appendChild(wrap.firstElementChild);
+          const label = wrap.firstElementChild;
+          label.style.left = pos.left;
+          label.style.top = pos.top;
+          sheet.appendChild(label);
         });
 
         sheetsEl.appendChild(sheet);
