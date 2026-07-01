@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firing Sequence Labels — Avery 5163</title>
+  <style>
+    :root {
+      --label-w: 4in;
+      --label-h: 2in;
+      --page-w: 8.5in;
+      --page-h: 11in;
+      --margin-top: 0.5in;
+      --margin-left: 0.15625in;
+      --pitch-x: 4.25in;
+      --pitch-y: 2in;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #e8e8e8;
+      color: #111;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: #1a1a2e;
+      color: #eee;
+      border-bottom: 1px solid #333;
+    }
+
+    .toolbar h1 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .toolbar p {
+      margin: 0;
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+
+    .toolbar button {
+      margin-left: auto;
+      padding: 0.5rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      background: #a855f7;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover { background: #9333ea; }
+
+    .toolbar a {
+      color: #c4b5fd;
+      font-size: 0.85rem;
+    }
+
+    #status {
+      padding: 2rem;
+      text-align: center;
+      color: #555;
+    }
+
+    #sheets {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .sheet {
+      position: relative;
+      width: var(--page-w);
+      height: var(--page-h);
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .label {
+      position: absolute;
+      width: var(--label-w);
+      height: var(--label-h);
+      padding: 0.1in 0.14in;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px dashed #ccc;
+    }
+
+    .label-seq {
+      font-size: 22pt;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.06in;
+    }
+
+    .label-name {
+      font-size: 11pt;
+      font-weight: 700;
+      line-height: 1.15;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .label-piece {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #333;
+      margin-top: 0.04in;
+      line-height: 1.1;
+    }
+
+    .label-distance {
+      font-size: 14pt;
+      font-weight: 700;
+      margin-top: auto;
+      padding-top: 0.06in;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .label-distance span {
+      font-size: 9pt;
+      font-weight: 500;
+      color: #555;
+      margin-right: 0.08in;
+    }
+
+    @media print {
+      body { background: #fff; }
+
+      .toolbar, #status { display: none !important; }
+
+      #sheets {
+        padding: 0;
+        gap: 0;
+      }
+
+      .sheet {
+        box-shadow: none;
+        page-break-after: always;
+      }
+
+      .sheet:last-child { page-break-after: auto; }
+
+      .label { border: none; }
+    }
+
+    @page {
+      size: letter;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h1>Firing sequence labels — Avery 5163</h1>
+      <p>2″ × 4″ · 10 per sheet · cue #, name, piece, fuse distance</p>
+    </div>
+    <a href="index.html">← Design board</a>
+    <button type="button" onclick="window.print()">Print labels</button>
+  </div>
+
+  <p id="status">Loading firing sequence…</p>
+  <div id="sheets"></div>
+
+  <script>
+    const FUSE_BURN_SEC_PER_FT = 12;
+    const LABELS_PER_SHEET = 10;
+    const COLS = 2;
+    const ROWS = 5;
+
+    function parseCsv(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(",").map((h) => h.trim());
+      return lines.slice(1).map((line) => {
+        const cols = [];
+        let cur = "";
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            inQuotes = !inQuotes;
+          } else if (ch === "," && !inQuotes) {
+            cols.push(cur);
+            cur = "";
+          } else {
+            cur += ch;
+          }
+        }
+        cols.push(cur);
+        const row = {};
+        headers.forEach((h, i) => {
+          row[h] = (cols[i] ?? "").trim();
+        });
+        return row;
+      });
+    }
+
+    function parseShowTime(timeStr) {
+      const parts = String(timeStr).trim().split(":");
+      const h = Number(parts[0]) || 0;
+      const m = Number(parts[1]) || 0;
+      return h * 3600 + m * 60;
+    }
+
+    function fuseDistanceFt(row, t0Sec, bucketOffsets) {
+      const key = row.Start;
+      const n = bucketOffsets[key] || 0;
+      bucketOffsets[key] = n + 1;
+      const base = (parseShowTime(row.Start) - t0Sec) / FUSE_BURN_SEC_PER_FT;
+      return Math.min(base + n * 0.35, 299.5);
+    }
+
+    function computeFusePlacements(rows) {
+      const t0Sec = Math.min(...rows.map((r) => parseShowTime(r.Start)));
+      const bucketOffsets = {};
+      return rows.map((row) => ({
+        row,
+        distFt: fuseDistanceFt(row, t0Sec, bucketOffsets),
+      }));
+    }
+
+    function formatFuseFt(distFt) {
+      let feet = Math.floor(distFt);
+      let inches = Math.round((distFt - feet) * 12);
+      if (inches === 12) {
+        feet += 1;
+        inches = 0;
+      }
+      return `${feet}'${inches}"`;
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function labelPosition(index) {
+      const col = index % COLS;
+      const row = Math.floor(index / COLS) % ROWS;
+      const left = `calc(var(--margin-left) + ${col} * var(--pitch-x))`;
+      const top = `calc(var(--margin-top) + ${row} * var(--pitch-y))`;
+      return { left, top };
+    }
+
+    function renderLabel({ row, distFt }) {
+      const name = row.Item || row.Description || "—";
+      const piece = row.Piece || "";
+      const pieceHtml = piece
+        ? `<div class="label-piece">${escapeHtml(piece)}</div>`
+        : "";
+
+      return (
+        `<div class="label">` +
+        `<div class="label-seq">#${escapeHtml(String(row.Sequence))}</div>` +
+        `<div class="label-name">${escapeHtml(name)}</div>` +
+        pieceHtml +
+        `<div class="label-distance"><span>Fuse</span>${escapeHtml(formatFuseFt(distFt))}</div>` +
+        `</div>`
+      );
+    }
+
+    function renderSheets(placements) {
+      const sheetsEl = document.getElementById("sheets");
+      const statusEl = document.getElementById("status");
+      sheetsEl.innerHTML = "";
+
+      if (placements.length === 0) {
+        statusEl.textContent = "No cues found in data/firing-sequence.csv";
+        return;
+      }
+
+      const sheetCount = Math.ceil(placements.length / LABELS_PER_SHEET);
+      statusEl.textContent = `${placements.length} labels · ${sheetCount} sheet${sheetCount === 1 ? "" : "s"} of Avery 5163`;
+
+      for (let s = 0; s < sheetCount; s++) {
+        const sheet = document.createElement("div");
+        sheet.className = "sheet";
+
+        const start = s * LABELS_PER_SHEET;
+        const chunk = placements.slice(start, start + LABELS_PER_SHEET);
+
+        chunk.forEach((placement, i) => {
+          const pos = labelPosition(i);
+          const wrap = document.createElement("div");
+          wrap.style.left = pos.left;
+          wrap.style.top = pos.top;
+          wrap.innerHTML = renderLabel(placement);
+          sheet.appendChild(wrap.firstElementChild);
+        });
+
+        sheetsEl.appendChild(sheet);
+      }
+    }
+
+    async function init() {
+      try {
+        const res = await fetch("data/firing-sequence.csv");
+        if (!res.ok) throw new Error("Could not load firing-sequence.csv");
+        const text = await res.text();
+        const rows = parseCsv(text).filter((r) => r.Sequence);
+        renderSheets(computeFusePlacements(rows));
+      } catch (err) {
+        document.getElementById("status").textContent =
+          "Error: " + err.message + " — open via a local server (e.g. npx serve .)";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
